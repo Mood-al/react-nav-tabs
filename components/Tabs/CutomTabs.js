@@ -1,5 +1,8 @@
 import styled from "@emotion/styled";
-import { getNormalizedScrollLeft } from "normalize-scroll-left";
+import {
+  detectScrollType,
+  getNormalizedScrollLeft,
+} from "normalize-scroll-left";
 import { useCallback, useContext, useLayoutEffect } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -34,127 +37,105 @@ const CutomTabs = () => {
   const onTabClick = (index) => {
     setIsActive(index);
   };
-  console.log(isActive);
+  // console.log(isActive);
 
   useEffect(() => {
-    setTimeout(() => {
-      tabsRef.current.scrollLeft +=
-        Math.abs(tabRef.current[isActive].getBoundingClientRect().x) -
-        tabRef.current[0].offsetWidth;
-    }, 200);
+    scrollSelectedIntoView();
   }, [isActive]);
+
+  const getScrollSize = () => {
+    const containerSize = tabsRef.current["clientWidth"];
+    let totalSize = 0;
+    const children = Array.from(tabRef.current);
+
+    for (let i = 0; i < children.length; i += 1) {
+      const tab = children[i];
+
+      if (totalSize + tab["clientWidth"] > containerSize) {
+        break;
+      }
+
+      totalSize += tabRef.current[isActive].clientWidth;
+    }
+
+    return totalSize;
+  };
+
+  const moveTabsScroll = (delta) => {
+    let scrollValue = tabsRef.current["scrollLeft"];
+
+    scrollValue += delta * (isRTL ? -1 : 1); // Fix for Edge
+
+    scrollValue *= isRTL ? -1 : 1;
+
+    console.log(scrollValue);
+    tabsRef.current.scrollLeft = scrollValue;
+  };
+
+  const scrollSelectedIntoView = () => {
+    let start = "left";
+    let end = "right";
+    let scrollStart = "scrollLeft";
+    if (
+      tabRef.current[isActive].getBoundingClientRect()[start] <
+      tabsRef.current.getBoundingClientRect()[start]
+    ) {
+      // left side of button is out of view
+      const nextScrollStart =
+        tabsRef.current.scrollLeft +
+        (tabRef.current[isActive].getBoundingClientRect()[start] -
+          tabsRef.current.getBoundingClientRect()[start]);
+      tabsRef.current.scrollLeft = nextScrollStart;
+    } else if (
+      tabRef.current[isActive].getBoundingClientRect()[end] >
+      tabsRef.current.getBoundingClientRect()[end]
+    ) {
+      // right side of button is out of view
+      const nextScrollStart =
+        tabsRef.current.scrollLeft +
+        (tabRef.current[isActive].getBoundingClientRect()[end] -
+          tabsRef.current.getBoundingClientRect()[end]);
+      tabsRef.current.scrollLeft = nextScrollStart;
+    }
+  };
+
+  // hide and show arrows
+  // showStartScroll = isRtl ? scrollLeft < scrollWidth - clientWidth - 1 : scrollLeft > 1;
+  //       showEndScroll = !isRtl ? scrollLeft < scrollWidth - clientWidth - 1 : scrollLeft > 1;
   useEffect(() => {
     // tabsRef.current.scrollLeft = 1;
     if (isRTL) {
       console.log(-Math.abs(posRef.current), "rtl");
       setTimeout(() => {
         tabsRef.current.scrollLeft += posRef.current;
-      }, 100);
+      }, 130);
     } else {
       console.log(Math.abs(posRef.current), "ltr");
 
       setTimeout(() => {
         tabsRef.current.scrollLeft += posRef.current;
       }, 100);
-      //   tabsRef.current.scrollLeft += posRef.current;
-      //   tabsRef.current.scrollLeft += posRef.current;
     }
   }, [isRTL]);
-  //   useEffect(() => {
-  //     if (isRTL) {
-  //       console.log(Math.abs(posRef.current), "rtl");
-  //       tabsRef.current.scrollLeft += -Math.abs(posRef.current);
-  //     } else {
-  //       console.log(Math.abs(posRef.current), "ltr");
 
-  //       tabsRef.current.scrollLeft += Math.abs(posRef.current);
-  //       //   tabsRef.current.scrollLeft += posRef.current;
-  //       //   tabsRef.current.scrollLeft += posRef.current;
-  //     }
-  //   }, [isRTL]);
   const onTabsScroll = useCallback((e) => {
-    // console.log(posRef.current, "refPos");
-    // console.log(getScrollPosition(e.target), "tabPos");
-    // console.log(getScrollPosition(e.target).x, "calc");
     const parentPos = tabsRef.current.getBoundingClientRect();
     const childPos = tabRef.current[isActive].getBoundingClientRect();
-    // console.log(parentPos.x);
-    // console.log(getScrollPosition(e.target));
-    // console.log(childPos.left , "child");
-    // // console.log(posRef.current, "ref");
-    // console.log(
-    //   Math.abs(getScrollPosition(e.target).x) -
-    //     Math.abs(childPos.x - tabsRef.current.offsetWidth),
-    //   "new"
-    // );
-    // console.log(childPos.x - tabsRef.current.offsetWidth, "sss");
-    // console.log(
-    //   Math.abs(tabsRef.current.getBoundingClientRect().left - childPos.x),
-    //   "sss"
-    // );
 
-    // console.log(tabRef.current[isActive].getBoundingClientRect().width);
-    // console.log(
-    //   tabsRef.current.offsetWidth +
-    //     tabRef.current[isActive].getBoundingClientRect().width * 2,
-    //   "new"
-    // );
-    // console.log(getScrollPosition(e.target).x, "scroll pos");
-    // console.log(parentPos.x - childPos.x, "acgtive");
-    // console.log(
-    //   Math.abs(getScrollPosition(e.target).x) -
-    //     parentPos.x -
-    //     childPos.x +
-    //     tabsRef.current.offsetWidth
-    // );
-    // console.log(
-    //   tabsRef.current.scrollLeft +
-    //     tabsRef.current.clientWidth -
-    //     tabsRef.current.scrollWidth
-    // );
-    // console.log(
-    //   tabsRef.current.scrollLeft / tabsRef.current.clientWidth,
-    //   "ssss"
-    // );
-    console.log(getNormalizedScrollLeft(tabsRef.current, "rtl"));
     const correction = isRTL
       ? getNormalizedScrollLeft(tabsRef.current, "rtl") +
         tabsRef.current.clientWidth -
         tabsRef.current.scrollWidth
       : tabsRef.current.scrollLeft;
-    // console.log(
-    //   tabsRef.current.scrollLeft +
-    //     tabsRef.current.clientWidth -
-    //     tabsRef.current.scrollWidth,
-    //   "corr"
-    // );
-    // console.log(
-    //   tabsRef.current.scrollWidth -
-    //     Math.abs(tabsRef.current.scrollLeft) -
-    //     tabsRef.current.clientWidth
-    // );
+
     let startIndicator = isRTL ? "right" : "left";
 
     const scrollPos =
       tabRef.current[isActive].getBoundingClientRect()[startIndicator] -
       tabsRef.current.getBoundingClientRect()[startIndicator] +
       correction;
-    console.log(scrollPos);
-    // console.log(tabsRef.current.scrollLeft);
-    // console.log(getScrollPosition(e.target).x);
-    // console.log(
-    //   tabsRef.current.offsetWidth -
-    //     tabRef.current[isActive].getBoundingClientRect().width * 2
-    // );
-    const { x, width, left, right } =
-      tabRef.current[isActive].getBoundingClientRect();
-    // console.log({ x, width, left, right });
+
     posRef.current = scrollPos;
-    // console.log(parentPos.x - childPos.x, "p - c");
-
-    // setPos(getScrollPosition(e.target).x - (parentPos.x - childPos.x));
-
-    // pos = getScrollPosition(e.target).x - (parentPos.x - childPos.x);
   });
 
   return (
