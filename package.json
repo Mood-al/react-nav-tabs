@@ -1,0 +1,26 @@
+{
+  "name": "next-test",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.7.1",
+    "@emotion/styled": "^11.6.0",
+    "@mui/icons-material": "^5.2.5",
+    "@mui/material": "^5.0.0",
+    "@mui/styles": "^5.0.0",
+    "install": "^0.13.0",
+    "jss-rtl": "^0.3.0",
+    "next": "11.0.1",
+    "normalize-scroll-left": "^0.2.1",
+    "npm": "^8.3.0",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "stylis": "^4.0.13",
+    "stylis-plugin-rtl": "^2.1.1"
+  }
+}
