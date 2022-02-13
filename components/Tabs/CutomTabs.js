@@ -17,8 +17,41 @@ const getScrollPosition = (el = window) => ({
 const CutomTabs = () => {
   const tabsRef = useRef();
   const tabRef = useRef([]);
-  const [isActive, setIsActive] = useState(4);
-  const [pos, setPos] = useState(0);
+  const [isActive, setIsActive] = useState(20);
+  const [displayScroll, setDisplayScroll] = useState({
+    start: false,
+    end: false,
+  });
+
+  const updateScrollButtonState = () => {
+    const { scrollTop, scrollHeight, clientHeight, scrollWidth, clientWidth } =
+      tabsRef.current;
+    let showStartScroll;
+    let showEndScroll;
+
+    const scrollLeft = getNormalizedScrollLeft(
+      tabsRef.current,
+      isRTL ? "rtl" : "ltr"
+    ); // use 1 for the potential rounding error with browser zooms.
+
+    showStartScroll = isRTL
+      ? Math.ceil(scrollLeft.toFixed(2)) < scrollWidth - clientWidth - 1
+      : scrollLeft > 1;
+    showEndScroll = !isRTL
+      ? Math.ceil(scrollLeft.toFixed(2)) < scrollWidth - clientWidth - 1
+      : scrollLeft > 1;
+
+    if (
+      showStartScroll !== displayScroll.start ||
+      showEndScroll !== displayScroll.end
+    ) {
+      setDisplayScroll({
+        start: isRTL ? showEndScroll : showStartScroll,
+        end: isRTL ? showStartScroll : showEndScroll,
+      });
+    }
+  };
+
   const posRef = useRef(0);
   const onRightBtnClick = () => {
     if (tabsRef.current.clientWidth < tabsRef.current.scrollWidth) {
@@ -40,42 +73,44 @@ const CutomTabs = () => {
   // console.log(isActive);
 
   useEffect(() => {
-    scrollSelectedIntoView();
+    setTimeout(() => scrollSelectedIntoView(), 100);
   }, [isActive]);
+  // useEffect(() => {
+  //   updateScrollButtonState();
+  // });
+  // const getScrollSize = () => {
+  //   const containerSize = tabsRef.current["clientWidth"];
+  //   let totalSize = 0;
+  //   const children = Array.from(tabRef.current);
 
-  const getScrollSize = () => {
-    const containerSize = tabsRef.current["clientWidth"];
-    let totalSize = 0;
-    const children = Array.from(tabRef.current);
+  //   for (let i = 0; i < children.length; i += 1) {
+  //     const tab = children[i];
 
-    for (let i = 0; i < children.length; i += 1) {
-      const tab = children[i];
+  //     if (totalSize + tab["clientWidth"] > containerSize) {
+  //       break;
+  //     }
 
-      if (totalSize + tab["clientWidth"] > containerSize) {
-        break;
-      }
+  //     totalSize += tabRef.current[isActive].clientWidth;
+  //   }
 
-      totalSize += tabRef.current[isActive].clientWidth;
-    }
+  //   return totalSize;
+  // };
 
-    return totalSize;
-  };
+  // const moveTabsScroll = (delta) => {
+  //   let scrollValue = tabsRef.current["scrollLeft"];
 
-  const moveTabsScroll = (delta) => {
-    let scrollValue = tabsRef.current["scrollLeft"];
+  //   scrollValue += delta * (isRTL ? -1 : 1); // Fix for Edge
 
-    scrollValue += delta * (isRTL ? -1 : 1); // Fix for Edge
+  //   scrollValue *= isRTL ? -1 : 1;
 
-    scrollValue *= isRTL ? -1 : 1;
-
-    console.log(scrollValue);
-    tabsRef.current.scrollLeft = scrollValue;
-  };
+  //   console.log(scrollValue);
+  //   tabsRef.current.scrollLeft = scrollValue;
+  // };
 
   const scrollSelectedIntoView = () => {
     let start = "left";
     let end = "right";
-    let scrollStart = "scrollLeft";
+
     if (
       tabRef.current[isActive].getBoundingClientRect()[start] <
       tabsRef.current.getBoundingClientRect()[start]
@@ -116,9 +151,11 @@ const CutomTabs = () => {
         tabsRef.current.scrollLeft += posRef.current;
       }, 100);
     }
+    updateScrollButtonState();
   }, [isRTL]);
 
   const onTabsScroll = useCallback((e) => {
+    updateScrollButtonState();
     const parentPos = tabsRef.current.getBoundingClientRect();
     const childPos = tabRef.current[isActive].getBoundingClientRect();
 
@@ -138,15 +175,21 @@ const CutomTabs = () => {
     posRef.current = scrollPos;
   });
 
+  console.log("ssss");
+
   return (
     <StyledTabsContainer>
-      <button className="right" onClick={onRightBtnClick}>
-        {">"}{" "}
-      </button>
-      <button className="left" onClick={onLeftBtnClick}>
-        {" "}
-        {"<"}{" "}
-      </button>
+      {displayScroll.end && (
+        <button className="right" onClick={onRightBtnClick}>
+          {"> end"}{" "}
+        </button>
+      )}
+      {displayScroll.start && (
+        <button className="left" onClick={onLeftBtnClick}>
+          {" "}
+          {"< start"}{" "}
+        </button>
+      )}
       <StyledCutomTabs ref={tabsRef} onScroll={onTabsScroll}>
         {[...Array(40).keys()].map((item, index) => (
           <div
