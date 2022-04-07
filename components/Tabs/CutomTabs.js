@@ -20,28 +20,26 @@ const getScrollPosition = (el = window) => ({
 let warnedOnceTabPresent = false;
 const defaultIndicatorStyle = {};
 
-const CutomTabs = () => {
+const CutomTabs = ({ onTabClick, activeTab, isRTL, children }) => {
   const tabsRef = useRef();
   const tabRef = useRef([]);
-  const [isActive, setIsActive] = useState(20);
+
   const [displayScroll, setDisplayScroll] = useState({
     start: false,
     end: false,
   });
-  const [mounted, setMounted] = useState(false);
   const [indicatorStyle, setIndicatorStyle] = useState(defaultIndicatorStyle);
-  const { isRTL } = useContext(RTLContext);
 
   const valueToIndex = new Map();
 
-  const getTabsMeta = () => {
+  const getTabsRects = () => {
     const tabsNode = tabsRef.current;
-    let tabsMeta;
+    let tabsRects;
 
     if (tabsNode) {
       const rect = tabsNode.getBoundingClientRect(); // create a new object with ClientRect class props + scrollLeft
 
-      tabsMeta = {
+      tabsRects = {
         clientWidth: tabsNode.clientWidth,
         scrollLeft: tabsNode.scrollLeft,
         scrollTop: tabsNode.scrollTop,
@@ -57,20 +55,20 @@ const CutomTabs = () => {
       };
     }
 
-    let tabMeta;
+    let tabRect;
 
     if (tabsNode) {
       const children = tabRef.current;
 
       if (children.length > 0) {
-        const tab = tabRef.current[isActive];
-        console.log(tab, "ddddd");
+        const tab = tabRef.current[activeTab];
+
         if (process.env.NODE_ENV !== "production") {
           if (!tab) {
             console.error(
               [
-                `rn-tabs: The \`isActive\` provided to the Tabs component is invalid.`,
-                `None of the Tabs' children match with "${isActive}".`,
+                `rn-tabs: The \`activeTab\` provided to the Tabs component is invalid.`,
+                `None of the Tabs' children match with "${activeTab}".`,
                 valueToIndex.keys
                   ? `You can provide one of the following values: ${Array.from(
                       valueToIndex.keys()
@@ -81,21 +79,21 @@ const CutomTabs = () => {
           }
         }
 
-        tabMeta = tab ? tab.getBoundingClientRect() : null;
+        tabRect = tab ? tab.getBoundingClientRect() : null;
 
         if (process.env.NODE_ENV !== "production") {
           if (
             process.env.NODE_ENV !== "test" &&
             !warnedOnceTabPresent &&
-            tabMeta &&
-            tabMeta.width === 0 &&
-            tabMeta.height === 0
+            tabRect &&
+            tabRect.width === 0 &&
+            tabRect.height === 0
           ) {
-            tabsMeta = null;
+            tabsRects = null;
             console.error(
               [
                 "rn-tabs: The `value` provided to the Tabs component is invalid.",
-                `The Tab with this \`value\` ("${isActive}") is not part of the document layout.`,
+                `The Tab with this \`value\` ("${activeTab}") is not part of the document layout.`,
                 "Make sure the tab item is present in the document or that it's not `display: none`.",
               ].join("\n")
             );
@@ -106,33 +104,33 @@ const CutomTabs = () => {
     }
 
     return {
-      tabsMeta,
-      tabMeta,
+      tabsRects,
+      tabRect,
     };
   };
 
   const updateIndicatorState = useEventCallback(() => {
-    const { tabsMeta, tabMeta } = getTabsMeta();
+    const { tabsRects, tabRect } = getTabsRects();
     let startValue = 0;
     let startIndicator;
 
     startIndicator = isRTL ? "right" : "left";
 
-    if (tabMeta && tabsMeta) {
+    if (tabRect && tabsRects) {
       const correction = isRTL
-        ? tabsMeta.scrollLeftNormalized +
-          tabsMeta.clientWidth -
-          tabsMeta.scrollWidth
-        : tabsMeta.scrollLeft;
+        ? tabsRects.scrollLeftNormalized +
+          tabsRects.clientWidth -
+          tabsRects.scrollWidth
+        : tabsRects.scrollLeft;
       startValue =
         (isRTL ? -1 : 1) *
-        (tabMeta[startIndicator] - tabsMeta[startIndicator] + correction);
+        (tabRect[startIndicator] - tabsRects[startIndicator] + correction);
     }
 
     const newIndicatorStyle = {
       [startIndicator]: startValue,
       // May be wrong until the font is loaded.
-      ["width"]: tabMeta ? tabMeta["width"] : 0,
+      ["width"]: tabRect ? tabRect["width"] : 0,
     }; // IE11 support, replace with Number.isNaN
     // eslint-disable-next-line no-restricted-globals
 
@@ -155,49 +153,7 @@ const CutomTabs = () => {
     }
   });
 
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     // scrollSelectedIntoView();
-  //   }, 130);
-  // }, [isActive]);
-
-  // useEffect(() => {
-  //   // tabsRef.current.scrollLeft = 1;
-  //   // updateScrollButtonState();
-  //   if (isRTL) {
-  //     setTimeout(() => {
-  //       scroll(tabsRef.current.scrollLeft + posRef.current);
-  //       // tabsRef.current.scrollLeft += posRef.current;
-  //     }, 130);
-  //   } else {
-  //     setTimeout(() => {
-  //       // scroll(posRef.current);
-  //       // tabsRef.current.scrollLeft += posRef.current;
-  //       scroll(tabsRef.current.scrollLeft + posRef.current);
-  //     }, 100);
-  //   }
-  // }, [isRTL]);
-
-  const moveTabsScroll = (delta) => {
-    let scrollValue = tabsRef.current.scrollLeft;
-
-    scrollValue += delta; // Fix for Edge
-
-    // scrollValue *= isRTL ? -1 : 1;
-
-    scroll(scrollValue);
-  };
-
-  const updateScrollButtonState = useCallback(() => {
-    const { tabsMeta, tabMeta } = getTabsMeta();
-    console.log({
-      tabsMeta,
-      tabMeta,
-    });
+  const updateScrollButtonState = useEventCallback(() => {
     const { scrollWidth, clientWidth } = tabsRef.current;
     let showStartScroll;
     let showEndScroll;
@@ -206,21 +162,21 @@ const CutomTabs = () => {
       tabsRef.current,
       isRTL ? "rtl" : "ltr"
     ); // use 1 for the potential rounding error with browser zooms.
-
-    showStartScroll = isRTL
-      ? Math.ceil(scrollLeft.toFixed(2)) < scrollWidth - clientWidth - 1
-      : scrollLeft > 1;
-    showEndScroll = !isRTL
-      ? Math.ceil(scrollLeft.toFixed(2)) < scrollWidth - clientWidth - 1
-      : scrollLeft > 1;
+    console.log(Math.floor(scrollLeft.toFixed(2)), "ddddddddddddddddddddddd");
+    console.log(
+      Math.ceil(scrollLeft.toFixed(2)) < scrollWidth - clientWidth - 1
+    );
+    showStartScroll = Math.floor(scrollLeft.toFixed(2)) > 1;
+    showEndScroll =
+      Math.ceil(scrollLeft.toFixed(2)) < scrollWidth - clientWidth - 1;
 
     if (
       showStartScroll !== displayScroll.start ||
       showEndScroll !== displayScroll.end
     ) {
       setDisplayScroll({
-        start: isRTL ? showEndScroll : showStartScroll,
-        end: isRTL ? showStartScroll : showEndScroll,
+        start: showStartScroll,
+        end: showEndScroll,
       });
     }
   });
@@ -234,7 +190,7 @@ const CutomTabs = () => {
 
     // moveTabsScroll(tabsRef.current.clientWidth);
     scroll(
-      tabsRef.current.scrollLeft + tabRef.current[isActive].clientWidth * 2,
+      tabsRef.current.scrollLeft + tabRef.current[activeTab].clientWidth * 2,
       300
     );
   };
@@ -247,33 +203,14 @@ const CutomTabs = () => {
     // }
     // moveTabsScroll(-1 * tabsRef.current.clientWidth);
     scroll(
-      tabsRef.current.scrollLeft - tabRef.current[isActive].clientWidth * 2,
+      tabsRef.current.scrollLeft - tabRef.current[activeTab].clientWidth * 2,
       300
     );
   };
 
-  const getScrollSize = () => {
-    const clientSize = "clientWidth";
-    const containerSize = tabsRef.current[clientSize];
-    let totalSize = 0;
-    const children = Array.from(tabRef.current);
-
-    for (let i = 0; i < children.length; i += 1) {
-      const tab = children[i];
-
-      if (totalSize + tab[clientSize] > containerSize) {
-        break;
-      }
-
-      totalSize += tab[clientSize];
-    }
-
-    return totalSize;
+  const onNativeTabClick = (e, index) => {
+    onTabClick(e, index);
   };
-  const onTabClick = (index) => {
-    setIsActive(index);
-  };
-  // console.log(isActive);
 
   const scroll = (scrollValue, duration, animation = true) => {
     console.log(scrollValue);
@@ -292,24 +229,24 @@ const CutomTabs = () => {
     let end = "right";
 
     if (
-      tabRef.current[isActive].getBoundingClientRect()[start] <
+      tabRef.current[activeTab].getBoundingClientRect()[start] <
       tabsRef.current.getBoundingClientRect()[start]
     ) {
       // left side of button is out of view
       const nextScrollStart =
         tabsRef.current.scrollLeft +
-        (tabRef.current[isActive].getBoundingClientRect()[start] -
+        (tabRef.current[activeTab].getBoundingClientRect()[start] -
           tabsRef.current.getBoundingClientRect()[start]);
       // tabsRef.current.scrollLeft = nextScrollStart;
       scroll(nextScrollStart, 300);
     } else if (
-      tabRef.current[isActive].getBoundingClientRect()[end] >
+      tabRef.current[activeTab].getBoundingClientRect()[end] >
       tabsRef.current.getBoundingClientRect()[end]
     ) {
       // right side of button is out of view
       const nextScrollStart =
         tabsRef.current.scrollLeft +
-        (tabRef.current[isActive].getBoundingClientRect()[end] -
+        (tabRef.current[activeTab].getBoundingClientRect()[end] -
           tabsRef.current.getBoundingClientRect()[end]);
       // tabsRef.current.scrollLeft = nextScrollStart;
       scroll(nextScrollStart, 300);
@@ -324,8 +261,12 @@ const CutomTabs = () => {
   React.useEffect(() => {
     /* Updating the indicator state. */
     updateIndicatorState();
-    updateScrollButtonState();
+    // updateScrollButtonState();
   });
+
+  useEffect(() => {
+    updateScrollButtonState();
+  }, [isRTL]);
 
   const handleTabsScroll = React.useMemo(
     () =>
@@ -340,49 +281,33 @@ const CutomTabs = () => {
     };
   }, [handleTabsScroll]);
 
-  // const onTabsScroll = (e) => {
-
-  //   const correction = isRTL
-  //     ? getNormalizedScrollLeft(tabsRef.current, "rtl") +
-  //       tabsRef.current.clientWidth -
-  //       tabsRef.current.scrollWidth
-  //     : tabsRef.current.scrollLeft;
-
-  //   let startIndicator = isRTL ? "right" : "left";
-
-  //   const scrollPos =
-  //     tabRef.current[isActive].getBoundingClientRect()[startIndicator] -
-  //     tabsRef.current.getBoundingClientRect()[startIndicator] +
-  //     correction;
-
-  //   posRef.current = scrollPos;
-  // };
-
   return (
     <StyledTabsContainer>
       {displayScroll.end && (
         <button className="right" onClick={onRightBtnClick}>
-          {"> end"}{" "}
+          <span dir="ltr"> {">"}</span>{" "}
         </button>
       )}
-      {displayScroll.start && (
-        <button className="left" onClick={onLeftBtnClick}>
-          {" "}
-          {"< start"}{" "}
-        </button>
-      )}
+
       <StyledCutomTabs ref={tabsRef} onScroll={handleTabsScroll}>
         {[...Array(40).keys()].map((item, index) => (
           <div
             key={item}
-            onClick={() => onTabClick(index)}
+            onClick={(e) => onNativeTabClick(e, index)}
             ref={(el) => (tabRef.current[index] = el)}
-            className={`tab  ${isActive === index ? "bg-primary" : ""}`}
+            className={`tab  ${activeTab === index ? "bg-primary" : ""}`}
           >
             item {item}
           </div>
         ))}
       </StyledCutomTabs>
+
+      {displayScroll.start && (
+        <button className="left" onClick={onLeftBtnClick}>
+          {" "}
+          <span dir="ltr"> {"<"}</span>{" "}
+        </button>
+      )}
     </StyledTabsContainer>
   );
 };
@@ -403,16 +328,17 @@ const StyledCutomTabs = styled.div`
 `;
 
 const StyledTabsContainer = styled.div`
+  padding: 0 25px;
   position: relative;
   button {
     position: absolute;
     top: 50%;
     transform: translate(0, -50%);
     &.right {
-      right: -70px;
+      right: -0px;
     }
     &.left {
-      left: -70px;
+      left: -0px;
     }
   }
 `;
