@@ -29,19 +29,20 @@ export default function Home() {
       deleniti nemo molestias.
       {/* <MatTabs /> */}
       <CustomTabs
-        // the props returns a group of events to control the tabs such as onLeftBtnClick
-        action={ref}
         activeTab={activeTab}
         onTabClick={onTabClick}
+        // the props returns a group of events to control the tabs such as onLeftBtnClick
+        action={ref}
+        // sets if the direction of the page is RTL or not
         isRTL={isRTL}
-        // set if the tabs reached the end point of the tab container
+        // sets if the tabs reached the end point of the tab container
         didReachEnd={didReachEnd}
         // sets if the tabs reached the start point container
         didReachStart={didReachStart}
         // sets how many tabs you want to scroll on every move
         // default 3 tabs on each navigation button click
         tabsScrollAmount={3}
-        // set the general animation duration when you click on the navigation buttons and when you click out the tabs view
+        // sets the general animation duration when you click on the navigation buttons and when you click out the tabs view
         // default 300s
         animationDuration={300}
         // sets the animation of the scroll when you click on the navigation buttons
@@ -54,10 +55,10 @@ export default function Home() {
         selectedAnimationDuration={300}
         // sets the right navitgation vutton icon
         // default feather arrow-right svg icon
-        rightBtnIcon={">"}
+        //*** */ rightBtnIcon={">"}
         // sets the left navitgation vutton icon
         // default feather arrow-left svg icon
-        leftBtnIcon={"<"}
+        //*** */ leftBtnIcon={"<"}
       >
         {[...Array(20).keys()].map((item, index) => (
           <div

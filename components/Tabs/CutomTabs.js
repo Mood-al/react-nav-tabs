@@ -8,8 +8,10 @@ import { useRef } from "react";
 
 import animate from "../../utils/animate";
 import { debounce } from "../../utils/debounce";
-import RightArrow from "../Arrows/RightArrow";
+import RightArrowIcon from "../Arrows/RightArrowIcon";
+import LeftArrowIcon from "../Arrows/LeftArrowIcon";
 import LeftArrow from "../Arrows/LeftArrow";
+import RightArrow from "../Arrows/RightArrow";
 
 const defaultIndicatorStyle = {};
 
@@ -25,8 +27,8 @@ const CutomTabs = ({
   animationDuration = 300,
   navBtnCLickAnimationDuration = 300,
   selectedAnimationDuration = 300,
-  rightBtnIcon = <RightArrow />,
-  leftBtnIcon = <LeftArrow />,
+  rightBtnIcon = <RightArrowIcon />,
+  leftBtnIcon = <LeftArrowIcon />,
 }) => {
   const tabsRef = useRef();
   const tabRef = useRef([]);
@@ -270,21 +272,21 @@ const CutomTabs = ({
   return (
     <StyledTabsContainer>
       {isRTL ? (
-        <button
+        <RightArrow
           disabled={!displayScroll.end}
           className="right"
           onClick={onRightBtnClick}
-        >
-          {rightBtnIcon}
-        </button>
+          dir="ltr"
+          rightBtnIcon={rightBtnIcon}
+        />
       ) : (
-        <button
+        <LeftArrow
           disabled={!displayScroll.start}
           className="left"
           onClick={onLeftBtnClick}
-        >
-          {leftBtnIcon}
-        </button>
+          dir="ltr"
+          leftBtnIcon={leftBtnIcon}
+        />
       )}
 
       <StyledCutomTabs
@@ -309,21 +311,21 @@ const CutomTabs = ({
       </StyledCutomTabs>
 
       {isRTL ? (
-        <button
+        <LeftArrow
           disabled={!displayScroll.start}
           className="left"
           onClick={onLeftBtnClick}
-        >
-          {leftBtnIcon}
-        </button>
+          dir="ltr"
+          leftBtnIcon={leftBtnIcon}
+        />
       ) : (
-        <button
+        <RightArrow
           disabled={!displayScroll.end}
           className="right"
           onClick={onRightBtnClick}
-        >
-          {rightBtnIcon}
-        </button>
+          dir="ltr"
+          rightBtnIcon={rightBtnIcon}
+        />
       )}
     </StyledTabsContainer>
   );
@@ -335,12 +337,17 @@ const StyledCutomTabs = styled.div`
   /* scroll-behavior: smooth; */
   background: red;
   display: flex;
-  overflow: hidden;
+  overflow: auto;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
   /* position: relative; */
   .tab {
     padding: 10px 40px;
     white-space: nowrap;
     cursor: pointer;
+  }
+  &::-webkit-scrollbar {
+    display: none;
   }
 `;
 
