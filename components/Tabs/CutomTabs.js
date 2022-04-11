@@ -29,6 +29,8 @@ const CutomTabs = ({
   selectedAnimationDuration = 300,
   rightBtnIcon = <RightArrowIcon />,
   leftBtnIcon = <LeftArrowIcon />,
+  hideNavBtnsOnMobile = false,
+  hideNavBtns = false,
 }) => {
   const tabsRef = useRef();
   const tabRef = useRef([]);
@@ -249,7 +251,6 @@ const CutomTabs = ({
   React.useEffect(() => {
     /* Updating the indicator state. */
     updateIndicatorState();
-    // updateScrollButtonState();
   });
 
   useEffect(() => {
@@ -270,23 +271,31 @@ const CutomTabs = ({
   }, [handleTabsScroll]);
 
   return (
-    <StyledTabsContainer>
-      {isRTL ? (
-        <RightArrow
-          disabled={!displayScroll.end}
-          className="right"
-          onClick={onRightBtnClick}
-          dir="ltr"
-          rightBtnIcon={rightBtnIcon}
-        />
-      ) : (
-        <LeftArrow
-          disabled={!displayScroll.start}
-          className="left"
-          onClick={onLeftBtnClick}
-          dir="ltr"
-          leftBtnIcon={leftBtnIcon}
-        />
+    <div className="rn___tabs___container">
+      {!hideNavBtns && (
+        <>
+          {isRTL ? (
+            <RightArrow
+              disabled={!displayScroll.end}
+              className={`rn___right___nav___btn ${
+                hideNavBtnsOnMobile ? "display___md___none" : ""
+              }`}
+              onClick={onRightBtnClick}
+              dir="ltr"
+              rightBtnIcon={rightBtnIcon}
+            />
+          ) : (
+            <LeftArrow
+              disabled={!displayScroll.start}
+              className={`rn___left___nav___btn ${
+                hideNavBtnsOnMobile ? "display___md___none" : ""
+              }`}
+              onClick={onLeftBtnClick}
+              dir="ltr"
+              leftBtnIcon={leftBtnIcon}
+            />
+          )}
+        </>
       )}
 
       <StyledCutomTabs
@@ -310,37 +319,44 @@ const CutomTabs = ({
         </>
       </StyledCutomTabs>
 
-      {isRTL ? (
-        <LeftArrow
-          disabled={!displayScroll.start}
-          className="left"
-          onClick={onLeftBtnClick}
-          dir="ltr"
-          leftBtnIcon={leftBtnIcon}
-        />
-      ) : (
-        <RightArrow
-          disabled={!displayScroll.end}
-          className="right"
-          onClick={onRightBtnClick}
-          dir="ltr"
-          rightBtnIcon={rightBtnIcon}
-        />
+      {!hideNavBtns && (
+        <>
+          {isRTL ? (
+            <LeftArrow
+              disabled={!displayScroll.start}
+              className={`rn___left___nav___btn ${
+                hideNavBtnsOnMobile ? "display___md___none" : ""
+              }`}
+              onClick={onLeftBtnClick}
+              dir="ltr"
+              leftBtnIcon={leftBtnIcon}
+            />
+          ) : (
+            <RightArrow
+              disabled={!displayScroll.end}
+              className={`rn___right___nav___btn ${
+                hideNavBtnsOnMobile ? "display___md___none" : ""
+              }`}
+              onClick={onRightBtnClick}
+              dir="ltr"
+              rightBtnIcon={rightBtnIcon}
+            />
+          )}
+        </>
       )}
-    </StyledTabsContainer>
+    </div>
   );
 };
 
 export default CutomTabs;
 const StyledCutomTabs = styled.div`
   box-sizing: border-box;
-  /* scroll-behavior: smooth; */
   background: red;
   display: flex;
   overflow: auto;
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
-  /* position: relative; */
+
   .tab {
     padding: 10px 40px;
     white-space: nowrap;

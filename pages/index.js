@@ -1,6 +1,3 @@
-import { Container } from "@mui/material";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { useRouter } from "next/dist/client/router";
 import { useContext, useRef, useState } from "react";
 
 import CustomTabs from "../components/Tabs/CutomTabs";
@@ -22,7 +19,7 @@ export default function Home() {
   const didReachEnd = (val) => setIsRightArrowDisabled(val);
   const didReachStart = (val) => setIsLeftArrowDisabled(val);
   return (
-    <div className="container">
+    <div className="">
       Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repudiandae nemo
       voluptate dolor sit voluptatem optio repellendus, quos reprehenderit
       aliquid molestias saepe officia aspernatur adipisci? Fuga cumque esse
@@ -55,17 +52,25 @@ export default function Home() {
         selectedAnimationDuration={300}
         // sets the right navitgation vutton icon
         // default feather arrow-right svg icon
-        //*** */ rightBtnIcon={">"}
+        rightBtnIcon={">"}
         // sets the left navitgation vutton icon
         // default feather arrow-left svg icon
-        //*** */ leftBtnIcon={"<"}
+        leftBtnIcon={"<"}
+        //hides the navigantion button
+        // default false
+        hideNavBtns={false}
+        // hides the navigation buttons on mobile devices
+        // default false
+        hideNavBtnsOnMobile={true}
       >
         {[...Array(20).keys()].map((item, index) => (
           <div
             key={item}
             onClick={(e) => onNativeTabClick(e, index)}
             ref={(el) => (tabRef.current[index] = el)}
-            className={`tab  ${activeTab === index ? "bg-primary" : ""}`}
+            className={`tab  ${
+              activeTab === index ? "rn___tab___selected bg-primary" : ""
+            }`}
           >
             item {item}
           </div>

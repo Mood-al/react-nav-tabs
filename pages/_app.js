@@ -6,6 +6,8 @@ import rtl from "jss-rtl";
 import { StylesProvider, jssPreset } from "@mui/styles";
 import { RTLProvider } from "../context/RTLContext";
 import Head from "next/head";
+import "../styles/rn-tabs.css";
+
 function MyApp({ Component, pageProps }) {
   const [isRTL, setIsRTL] = useState(false);
   const onRTLSwitcher = () => {
