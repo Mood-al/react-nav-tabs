@@ -7,25 +7,9 @@ import { StylesProvider, jssPreset } from "@mui/styles";
 import { RTLProvider } from "../context/RTLContext";
 import Head from "next/head";
 import "../styles/rn-tabs.css";
+import Layout from "../components/Layout";
 
 function MyApp({ Component, pageProps }) {
-  const [isRTL, setIsRTL] = useState(false);
-  const onRTLSwitcher = () => {
-    setIsRTL((prev) => !prev);
-  };
-
-  useEffect(() => {
-    const body = document.querySelector("body");
-    isRTL ? body.setAttribute("dir", "rtl") : body.setAttribute("dir", "ltr");
-  }, [isRTL]);
-
-  const jss = create({
-    plugins: [...jssPreset().plugins, rtl()],
-  });
-
-  const theme = createTheme({
-    direction: isRTL ? "rtl" : "unset",
-  });
   return (
     <>
       <Head>
@@ -36,20 +20,12 @@ function MyApp({ Component, pageProps }) {
           crossorigin="anonymous"
         />
       </Head>
-      <RTLProvider isRTL={isRTL}>
-        {/* <StylesProvider jss={jss}>
-          <ThemeProvider theme={theme}> */}
-        <button
-          type="button"
-          style={{ padding: 30, background: "cyan" }}
-          onClick={onRTLSwitcher}
-          dir="ltr"
-        >
-          you are in {isRTL ? "rtl" : "ltr"} click me to switch!
-        </button>
-        <Component {...pageProps} />
-        {/* </ThemeProvider>
-        </StylesProvider> */}
+      <RTLProvider>
+        <Layout>
+          <div className="container">
+            <Component {...pageProps} />
+          </div>
+        </Layout>
       </RTLProvider>
     </>
   );
