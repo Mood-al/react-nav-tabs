@@ -18,7 +18,7 @@ const defaultIndicatorStyle = {};
 const CutomTabs = ({
   onTabClick,
   activeTab,
-  isRTL,
+  isRTL = false,
   children,
   action,
   tabsScrollAmount = 3,
@@ -27,10 +27,12 @@ const CutomTabs = ({
   animationDuration = 300,
   navBtnCLickAnimationDuration = 300,
   selectedAnimationDuration = 300,
-  rightBtnIcon = <RightArrowIcon />,
-  leftBtnIcon = <LeftArrowIcon />,
+  NavBtnsIconColor = "#ddd",
+  rightBtnIcon = <RightArrowIcon NavBtnsIconColor={NavBtnsIconColor} />,
+  leftBtnIcon = <LeftArrowIcon NavBtnsIconColor={NavBtnsIconColor} />,
   hideNavBtnsOnMobile = false,
   hideNavBtns = false,
+  showTabsScroll = false,
 }) => {
   const tabsRef = useRef();
   const tabRef = useRef([]);
@@ -277,7 +279,7 @@ const CutomTabs = ({
           {isRTL ? (
             <RightArrow
               disabled={!displayScroll.end}
-              className={`rn___right___nav___btn ${
+              className={`rn___right___nav___btn rn___btn ${
                 hideNavBtnsOnMobile ? "display___md___none" : ""
               }`}
               onClick={onRightBtnClick}
@@ -287,7 +289,7 @@ const CutomTabs = ({
           ) : (
             <LeftArrow
               disabled={!displayScroll.start}
-              className={`rn___left___nav___btn ${
+              className={`rn___left___nav___btn rn___btn ${
                 hideNavBtnsOnMobile ? "display___md___none" : ""
               }`}
               onClick={onLeftBtnClick}
@@ -298,11 +300,14 @@ const CutomTabs = ({
         </>
       )}
 
-      <StyledCutomTabs
+      <div
         ref={tabsRef}
         role="tablist"
         aria-label="tabs"
         onScroll={handleTabsScroll}
+        className={`rn___tabs ${
+          !showTabsScroll ? "hide___rn___tabs___scroll" : ""
+        }`}
       >
         <>
           {React.Children.map(children, (child, index) =>
@@ -314,17 +319,20 @@ const CutomTabs = ({
               ["aria-controls"]: `panel-${index}`,
               id: `tab-${index}`,
               tabIndex: activeTab === index ? "0" : "-1",
+              className: `rn___tab rn___btn ${
+                activeTab === index ? "rn___tab___selected" : ""
+              }`,
             })
           )}
         </>
-      </StyledCutomTabs>
+      </div>
 
       {!hideNavBtns && (
         <>
           {isRTL ? (
             <LeftArrow
               disabled={!displayScroll.start}
-              className={`rn___left___nav___btn ${
+              className={`rn___left___nav___btn rn___btn ${
                 hideNavBtnsOnMobile ? "display___md___none" : ""
               }`}
               onClick={onLeftBtnClick}
@@ -334,7 +342,7 @@ const CutomTabs = ({
           ) : (
             <RightArrow
               disabled={!displayScroll.end}
-              className={`rn___right___nav___btn ${
+              className={`rn___right___nav___btn rn___btn ${
                 hideNavBtnsOnMobile ? "display___md___none" : ""
               }`}
               onClick={onRightBtnClick}
@@ -350,7 +358,7 @@ const CutomTabs = ({
 
 export default CutomTabs;
 const StyledCutomTabs = styled.div`
-  box-sizing: border-box;
+  /* box-sizing: border-box; */
   background: red;
   display: flex;
   overflow: auto;

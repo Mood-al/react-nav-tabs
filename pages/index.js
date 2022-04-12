@@ -52,19 +52,28 @@ export default function Home() {
         selectedAnimationDuration={300}
         // sets the right navitgation vutton icon
         // default feather arrow-right svg icon
-        rightBtnIcon={">"}
+        // rightBtnIcon={">"}
         // sets the left navitgation vutton icon
         // default feather arrow-left svg icon
-        leftBtnIcon={"<"}
+        // leftBtnIcon={"<"}
         //hides the navigantion button
         // default false
         hideNavBtns={false}
         // hides the navigation buttons on mobile devices
         // default false
         hideNavBtnsOnMobile={true}
+        // shows the scroll of the tabs
+        // default false
+        showTabsScroll={false}
+        // sets the color of navigation buttons if you dont want to use your own
+        // it just change the stroke color of the svg icon
+        // default #fff
+        // you cant use this option if you used your own btns
+
+        NavBtnsIconColor={"rgba(0, 0, 0, 0.6)"}
       >
         {[...Array(20).keys()].map((item, index) => (
-          <div
+          <button
             key={item}
             onClick={(e) => onNativeTabClick(e, index)}
             ref={(el) => (tabRef.current[index] = el)}
@@ -73,7 +82,7 @@ export default function Home() {
             }`}
           >
             item {item}
-          </div>
+          </button>
         ))}
       </CustomTabs>
       <button

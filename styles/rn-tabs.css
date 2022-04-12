@@ -15,28 +15,51 @@
     }
  }
 
-
+.rn___btn{
+    cursor: pointer;
+    background-color: transparent;
+    outline: none;
+    border: none;
+    border: 2px solid #dddd;
+    margin: 0 10px;
+}
+button:disabled.rn___btn,
+button[disabled].rn___btn{
+    border: 1px solid #999999;
+    cursor: not-allowed;
+}
+button:disabled.rn___btn,
+button[disabled].rn___btn svg{
+    stroke:  #ddd;
+ 
+}
 .rn___tabs___container{
-    padding: 0 25px;
+    /* border-bottom: 4px solid #ddd; */
+
+    margin: 0 25px;
     position: relative;
     display: flex;
 }
 .rn___tabs{
-    background: red;
     display: flex;
     overflow: auto;
+}
+.rn___tabs.hide___rn___tabs___scroll{
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
 }
-.rn___tabs::-webkit-scrollbar {
+.rn___tabs.hide___rn___tabs___scroll::-webkit-scrollbar {
     display: none;
 }
 .rn___tab{
     padding: 10px 40px;
     white-space: nowrap;
-    cursor: pointer;
 }
-
+.rn___tab___selected{
+    background-color: #fd9e02;
+    border-radius: 40px;
+    color: #fff;
+}
 .rn___right___nav___btn{
 
 }
