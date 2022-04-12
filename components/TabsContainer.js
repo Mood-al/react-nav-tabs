@@ -35,9 +35,9 @@ const TabsContainer = () => {
         // sets if the direction of the page is RTL or not
         isRTL={isRTL}
         // sets if the tabs reached the end point of the tab container
-        // didReachEnd={didReachEnd}
+        didReachEnd={didReachEnd}
         // sets if the tabs reached the start point container
-        // didReachStart={didReachStart}
+        didReachStart={didReachStart}
         // sets how many tabs you want to scroll on every move
         // default 3 tabs on each navigation button click
         tabsScrollAmount={3}
@@ -78,7 +78,7 @@ const TabsContainer = () => {
         // gets the coordinate of the selected tab
         // returns object of the width and the scrollLeft of the selected tab
         // be carefulwhen you use state with this function it will be triggered on every scroll movement and when the app rerenders
-        // selectedTabCoordinates={selectedTabCoordinates}
+        selectedTabCoordinates={selectedTabCoordinates}
       >
         {[...Array(20).keys()].map((item, index) => (
           <button key={item}>item {item}</button>

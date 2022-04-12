@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { useEventCallback } from "../../hooks/useEventCallback";
 import { getNormalizedScrollLeft } from "../../utils/getNormalizedScrollLeft";
-import React from "react";
+import React, { memo } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useRef } from "react";
@@ -150,8 +150,8 @@ const Tabs = ({
         start: showStartScroll,
         end: showEndScroll,
       });
-      didReachEnd(!showEndScroll);
-      didReachStart(!showStartScroll);
+      // didReachEnd(!showEndScroll);
+      // didReachStart(!showStartScroll);
     }
   });
 
@@ -276,69 +276,38 @@ const Tabs = ({
     };
   }, [handleTabsScroll]);
   //  TODO find a new way to control prev and next btns!
-  const startBtn = (
-    <div className="rn___nav___btn___container">
-      {!hideNavBtns && (
-        <>
-          {isRTL ? (
-            <RightArrow
-              disabled={!displayScroll.end}
-              className={`rn___right___nav___btn rn___btn rn___nav___btn ${
-                hideNavBtnsOnMobile ? "display___md___none" : ""
-              }`}
-              onClick={onRightBtnClick}
-              dir="ltr"
-              rightBtnIcon={rightBtnIcon}
-            />
-          ) : (
-            <LeftArrow
-              disabled={!displayScroll.start}
-              className={`rn___left___nav___btn rn___btn rn___nav___btn ${
-                hideNavBtnsOnMobile ? "display___md___none" : ""
-              }`}
-              onClick={onLeftBtnClick}
-              dir="ltr"
-              leftBtnIcon={leftBtnIcon}
-            />
-          )}
-        </>
-      )}
-    </div>
-  );
 
-  const endBtn = (
-    <div className="rn___nav___btn___container">
-      {!hideNavBtns && (
-        <>
-          {isRTL ? (
-            <LeftArrow
-              disabled={!displayScroll.start}
-              className={`rn___left___nav___btn rn___btn rn___nav___btn${
-                hideNavBtnsOnMobile ? "display___md___none" : ""
-              }`}
-              onClick={onLeftBtnClick}
-              dir="ltr"
-              leftBtnIcon={leftBtnIcon}
-            />
-          ) : (
-            <RightArrow
-              disabled={!displayScroll.end}
-              className={`rn___right___nav___btn rn___btn rn___nav___btn${
-                hideNavBtnsOnMobile ? "display___md___none" : ""
-              }`}
-              onClick={onRightBtnClick}
-              dir="ltr"
-              rightBtnIcon={rightBtnIcon}
-            />
-          )}
-        </>
-      )}
-    </div>
-  );
+  console.log(displayScroll);
 
   return (
     <div className="rn___tabs___container">
-      {startBtn}
+      <div className="rn___nav___btn___container">
+        {!hideNavBtns && (
+          <>
+            {isRTL ? (
+              <RightArrow
+                disabled={!displayScroll.end}
+                className={`rn___right___nav___btn rn___btn rn___nav___btn ${
+                  hideNavBtnsOnMobile ? "display___md___none" : ""
+                }`}
+                onClick={onRightBtnClick}
+                dir="ltr"
+                rightBtnIcon={rightBtnIcon}
+              />
+            ) : (
+              <LeftArrow
+                disabled={!displayScroll.start}
+                className={`rn___left___nav___btn rn___btn rn___nav___btn ${
+                  hideNavBtnsOnMobile ? "display___md___none" : ""
+                }`}
+                onClick={onLeftBtnClick}
+                dir="ltr"
+                leftBtnIcon={leftBtnIcon}
+              />
+            )}
+          </>
+        )}
+      </div>
       <div
         ref={tabsRef}
         role="tablist"
@@ -365,43 +334,35 @@ const Tabs = ({
           )}
         </>
       </div>
-      {endBtn}
+      <div className="rn___nav___btn___container">
+        {!hideNavBtns && (
+          <>
+            {isRTL ? (
+              <LeftArrow
+                disabled={!displayScroll.start}
+                className={`rn___left___nav___btn rn___btn rn___nav___btn${
+                  hideNavBtnsOnMobile ? "display___md___none" : ""
+                }`}
+                onClick={onLeftBtnClick}
+                dir="ltr"
+                leftBtnIcon={leftBtnIcon}
+              />
+            ) : (
+              <RightArrow
+                disabled={!displayScroll.end}
+                className={`rn___right___nav___btn rn___btn rn___nav___btn${
+                  hideNavBtnsOnMobile ? "display___md___none" : ""
+                }`}
+                onClick={onRightBtnClick}
+                dir="ltr"
+                rightBtnIcon={rightBtnIcon}
+              />
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 };
 
-export default Tabs;
-const StyledCutomTabs = styled.div`
-  /* box-sizing: border-box; */
-  background: red;
-  display: flex;
-  overflow: auto;
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-
-  .tab {
-    padding: 10px 40px;
-    white-space: nowrap;
-    cursor: pointer;
-  }
-  &::-webkit-scrollbar {
-    display: none;
-  }
-`;
-
-const StyledTabsContainer = styled.div`
-  padding: 0 25px;
-  position: relative;
-  display: flex;
-  button {
-    /* position: absolute;
-    top: 50%;
-    transform: translate(0, -50%);
-    &.right {
-      right: -0px;
-    }
-    &.left {
-      left: -0px;
-    } */
-  }
-`;
+export default memo(Tabs);
