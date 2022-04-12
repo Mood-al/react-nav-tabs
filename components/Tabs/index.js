@@ -184,16 +184,17 @@ const Tabs = ({
     scroll((isRTL ? -1 : 1) * scrollWidth);
   };
 
-  React.useImperativeHandle(
-    action,
-    () => ({
-      onLeftBtnClick,
-      onRightBtnClick,
-      goToStart,
-      goToEnd,
-    }),
-    [onLeftBtnClick, onRightBtnClick, goToStart, goToEnd]
-  );
+  /* A React hook that allows you to pass some methods to the parent component. */
+  // React.useImperativeHandle(
+  //   action,
+  //   () => ({
+  //     onLeftBtnClick,
+  //     onRightBtnClick,
+  //     goToStart,
+  //     goToEnd,
+  //   }),
+  //   [onLeftBtnClick, onRightBtnClick, goToStart, goToEnd]
+  // );
 
   const onNativeTabClick = (e, index) => {
     onTabClick(e, index);
