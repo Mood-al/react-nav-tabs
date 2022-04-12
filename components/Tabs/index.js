@@ -12,6 +12,7 @@ import RightArrowIcon from "../Arrows/RightArrowIcon";
 import LeftArrowIcon from "../Arrows/LeftArrowIcon";
 import LeftArrow from "../Arrows/LeftArrow";
 import RightArrow from "../Arrows/RightArrow";
+import ownerDocument from "../../utils/ownerDocument";
 
 const defaultIndicatorStyle = {};
 
@@ -260,9 +261,115 @@ const Tabs = ({
   });
 
   useEffect(() => {
-    setTimeout(() => updateScrollButtonState(), 100);
+    // I put the timeout because there is an issue happened when i put an external css file
+    // I tried to fix it or at least know why did that happened but i couldnt find the issue so i put this timeout.
+    // so this timeout responsible on triggring this function after 100s to aviod some unexpected bugs
+    // the issue that i faced when i used a main css file inside my project and tried to use Raleway font from google fonts inside that css file
+    // so when I imported this css file inside my project this function didnt trigger
+    //  on first render and that caused a bug inside the navigation button
+    const timer = setTimeout(() => updateScrollButtonState(), 100);
+    return () => clearTimeout(timer);
   }, [isRTL]);
-  console.log(displayScroll);
+
+  const nextItem = (list, item) => {
+    if (list === item) {
+      return list.firstChild;
+    }
+
+    if (item && item.nextElementSibling) {
+      return item.nextElementSibling;
+    }
+
+    return list.firstChild;
+  };
+
+  const previousItem = (list, item) => {
+    if (list === item) {
+      return list.lastChild;
+    }
+
+    if (item && item.previousElementSibling) {
+      return item.previousElementSibling;
+    }
+
+    return list.lastChild;
+  };
+
+  const handleKeyDown = (event) => {
+    const list = tabsRef.current;
+    const currentFocus = ownerDocument(list).activeElement; // Keyboard navigation assumes that [role="tab"] are siblings
+    // though we might warn in the future about nested, interactive elements
+    // as a a11y violation
+
+    const role = currentFocus.getAttribute("role");
+
+    if (role !== "tab") {
+      return;
+    }
+
+    let previousItemKey = "ArrowLeft";
+    let nextItemKey = "ArrowRight";
+
+    if (isRTL) {
+      // swap previousItemKey with nextItemKey
+      previousItemKey = "ArrowRight";
+      nextItemKey = "ArrowLeft";
+    }
+
+    switch (event.key) {
+      case previousItemKey:
+        event.preventDefault();
+        moveFocus(list, currentFocus, previousItem);
+        break;
+
+      case nextItemKey:
+        event.preventDefault();
+        moveFocus(list, currentFocus, nextItem);
+        break;
+
+      case "Home":
+        event.preventDefault();
+        moveFocus(list, null, nextItem);
+        break;
+
+      case "End":
+        event.preventDefault();
+        moveFocus(list, null, previousItem);
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  const moveFocus = (list, currentFocus, traversalFunction) => {
+    let wrappedOnce = false;
+    let nextFocus = traversalFunction(list, currentFocus);
+
+    while (nextFocus) {
+      // Prevent infinite loop.
+      if (nextFocus === list.firstChild) {
+        if (wrappedOnce) {
+          return;
+        }
+
+        wrappedOnce = true;
+      } // Same logic as useAutocomplete.js
+
+      const nextFocusDisabled =
+        nextFocus.disabled ||
+        nextFocus.getAttribute("aria-disabled") === "true";
+
+      if (!nextFocus.hasAttribute("tabindex") || nextFocusDisabled) {
+        // Move to the next element.
+        nextFocus = traversalFunction(list, nextFocus);
+      } else {
+        nextFocus.focus();
+        return;
+      }
+    }
+  };
+
   const handleTabsScroll = React.useMemo(
     () =>
       debounce(() => {
@@ -343,6 +450,7 @@ const Tabs = ({
         ref={tabsRef}
         role="tablist"
         aria-label="tabs"
+        onKeyDown={handleKeyDown}
         onScroll={handleTabsScroll}
         className={`rn___tabs ${
           !showTabsScroll ? "hide___rn___tabs___scroll" : ""
