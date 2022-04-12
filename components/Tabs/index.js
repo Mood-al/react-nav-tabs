@@ -12,6 +12,7 @@ import RightArrowIcon from "../Arrows/RightArrowIcon";
 import LeftArrowIcon from "../Arrows/LeftArrowIcon";
 import LeftArrow from "../Arrows/LeftArrow";
 import RightArrow from "../Arrows/RightArrow";
+import useUpdateEffect from "../../hooks/useUpdateEffect";
 
 const defaultIndicatorStyle = {};
 
@@ -261,7 +262,8 @@ const Tabs = ({
 
   useEffect(() => {
     updateScrollButtonState();
-  }, [isRTL]);
+  });
+  console.log(displayScroll);
 
   const handleTabsScroll = React.useMemo(
     () =>
