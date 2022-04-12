@@ -15,8 +15,7 @@ export default function animate(
   } = options;
   let start = null;
   const from = element[property];
-  // console.log(from, "sss");
-  console.log(from, "sdd");
+
   let cancelled = false;
 
   const cancel = () => {

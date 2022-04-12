@@ -15,7 +15,7 @@ import RightArrow from "../Arrows/RightArrow";
 
 const defaultIndicatorStyle = {};
 
-const CutomTabs = ({
+const Tabs = ({
   onTabClick,
   activeTab,
   isRTL = false,
@@ -24,6 +24,7 @@ const CutomTabs = ({
   tabsScrollAmount = 3,
   didReachEnd = () => null,
   didReachStart = () => null,
+  selectedTabCoordinates = () => null,
   animationDuration = 300,
   navBtnCLickAnimationDuration = 300,
   selectedAnimationDuration = 300,
@@ -36,7 +37,6 @@ const CutomTabs = ({
 }) => {
   const tabsRef = useRef();
   const tabRef = useRef([]);
-
   const [displayScroll, setDisplayScroll] = useState({
     start: false,
     end: false,
@@ -166,12 +166,6 @@ const CutomTabs = ({
   };
 
   const onLeftBtnClick = () => {
-    console.log(tabRef.current);
-    // if (tabsRef.current.clientWidth < tabsRef.current.scrollWidth) {
-    //   scroll(-tabRef.current[0].offsetWidth);
-    //   // tabsRef.current.scrollLeft -= tabRef.current[0].offsetWidth;
-    // }
-    // moveTabsScroll(-1 * tabsRef.current.clientWidth);
     scroll(
       tabsRef.current.scrollLeft -
         tabRef.current[activeTab].clientWidth * tabsScrollAmount,
@@ -181,13 +175,24 @@ const CutomTabs = ({
     );
   };
 
+  const goToStart = () => {
+    scroll(0);
+  };
+  const goToEnd = () => {
+    const { tabsRects } = getTabsRects();
+    const { scrollWidth } = tabsRects;
+    scroll((isRTL ? -1 : 1) * scrollWidth);
+  };
+
   React.useImperativeHandle(
     action,
     () => ({
       onLeftBtnClick,
       onRightBtnClick,
+      goToStart,
+      goToEnd,
     }),
-    [onLeftBtnClick, onRightBtnClick]
+    [onLeftBtnClick, onRightBtnClick, goToStart, goToEnd]
   );
 
   const onNativeTabClick = (e, index) => {
@@ -195,7 +200,6 @@ const CutomTabs = ({
   };
 
   const scroll = (scrollValue, duration, animation = true) => {
-    console.log(scrollValue);
     if (animation) {
       animate("scrollLeft", tabsRef.current, scrollValue, {
         duration: duration ? duration : 300,
@@ -206,7 +210,6 @@ const CutomTabs = ({
   };
 
   const scrollSelectedIntoView = useEventCallback(() => {
-    console.log("dfffffff");
     let start = "left";
     let end = "right";
 
@@ -235,7 +238,7 @@ const CutomTabs = ({
         tabsRef.current.scrollLeft +
         (tabRef.current[activeTab].getBoundingClientRect()[end] -
           tabsRef.current.getBoundingClientRect()[end]);
-      // tabsRef.current.scrollLeft = nextScrollStart;
+
       scroll(
         nextScrollStart,
         selectedAnimationDuration
@@ -248,6 +251,7 @@ const CutomTabs = ({
   React.useEffect(() => {
     // Don't animate on the first render.
     scrollSelectedIntoView();
+    selectedTabCoordinates(indicatorStyle);
   }, [scrollSelectedIntoView, indicatorStyle]);
 
   React.useEffect(() => {
@@ -271,15 +275,15 @@ const CutomTabs = ({
       handleTabsScroll.clear();
     };
   }, [handleTabsScroll]);
-
-  return (
-    <div className="rn___tabs___container">
+  //  TODO find a new way to control prev and next btns!
+  const startBtn = (
+    <div className="rn___nav___btn___container">
       {!hideNavBtns && (
         <>
           {isRTL ? (
             <RightArrow
               disabled={!displayScroll.end}
-              className={`rn___right___nav___btn rn___btn ${
+              className={`rn___right___nav___btn rn___btn rn___nav___btn ${
                 hideNavBtnsOnMobile ? "display___md___none" : ""
               }`}
               onClick={onRightBtnClick}
@@ -289,7 +293,7 @@ const CutomTabs = ({
           ) : (
             <LeftArrow
               disabled={!displayScroll.start}
-              className={`rn___left___nav___btn rn___btn ${
+              className={`rn___left___nav___btn rn___btn rn___nav___btn ${
                 hideNavBtnsOnMobile ? "display___md___none" : ""
               }`}
               onClick={onLeftBtnClick}
@@ -299,7 +303,42 @@ const CutomTabs = ({
           )}
         </>
       )}
+    </div>
+  );
 
+  const endBtn = (
+    <div className="rn___nav___btn___container">
+      {!hideNavBtns && (
+        <>
+          {isRTL ? (
+            <LeftArrow
+              disabled={!displayScroll.start}
+              className={`rn___left___nav___btn rn___btn rn___nav___btn${
+                hideNavBtnsOnMobile ? "display___md___none" : ""
+              }`}
+              onClick={onLeftBtnClick}
+              dir="ltr"
+              leftBtnIcon={leftBtnIcon}
+            />
+          ) : (
+            <RightArrow
+              disabled={!displayScroll.end}
+              className={`rn___right___nav___btn rn___btn rn___nav___btn${
+                hideNavBtnsOnMobile ? "display___md___none" : ""
+              }`}
+              onClick={onRightBtnClick}
+              dir="ltr"
+              rightBtnIcon={rightBtnIcon}
+            />
+          )}
+        </>
+      )}
+    </div>
+  );
+
+  return (
+    <div className="rn___tabs___container">
+      {startBtn}
       <div
         ref={tabsRef}
         role="tablist"
@@ -326,37 +365,12 @@ const CutomTabs = ({
           )}
         </>
       </div>
-
-      {!hideNavBtns && (
-        <>
-          {isRTL ? (
-            <LeftArrow
-              disabled={!displayScroll.start}
-              className={`rn___left___nav___btn rn___btn ${
-                hideNavBtnsOnMobile ? "display___md___none" : ""
-              }`}
-              onClick={onLeftBtnClick}
-              dir="ltr"
-              leftBtnIcon={leftBtnIcon}
-            />
-          ) : (
-            <RightArrow
-              disabled={!displayScroll.end}
-              className={`rn___right___nav___btn rn___btn ${
-                hideNavBtnsOnMobile ? "display___md___none" : ""
-              }`}
-              onClick={onRightBtnClick}
-              dir="ltr"
-              rightBtnIcon={rightBtnIcon}
-            />
-          )}
-        </>
-      )}
+      {endBtn}
     </div>
   );
 };
 
-export default CutomTabs;
+export default Tabs;
 const StyledCutomTabs = styled.div`
   /* box-sizing: border-box; */
   background: red;

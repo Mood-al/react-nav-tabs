@@ -1,10 +1,21 @@
-import { createContext } from "react";
+import { createContext, useEffect, useState } from "react";
 
 const RTLContext = createContext();
 
-const RTLProvider = ({ children, isRTL }) => {
+const RTLProvider = ({ children, ...props }) => {
+  const [isRTL, setIsRTL] = useState(false);
+  const onRTLSwitcher = () => {
+    setIsRTL((prev) => !prev);
+  };
+
+  useEffect(() => {
+    const body = document.querySelector("body");
+    isRTL ? body.setAttribute("dir", "rtl") : body.setAttribute("dir", "ltr");
+  }, [isRTL]);
   return (
-    <RTLContext.Provider value={{ isRTL }}>{children}</RTLContext.Provider>
+    <RTLContext.Provider value={{ ...props, onRTLSwitcher, isRTL }}>
+      {children}
+    </RTLContext.Provider>
   );
 };
 
