@@ -251,7 +251,7 @@ const Tabs = ({
   React.useEffect(() => {
     // Don't animate on the first render.
     scrollSelectedIntoView();
-    selectedTabCoordinates(indicatorStyle);
+    // selectedTabCoordinates(indicatorStyle);
   }, [scrollSelectedIntoView, indicatorStyle]);
 
   React.useEffect(() => {
