@@ -260,7 +260,7 @@ const Tabs = ({
   });
 
   useEffect(() => {
-    updateScrollButtonState();
+    setTimeout(() => updateScrollButtonState(), 100);
   }, [isRTL]);
   console.log(displayScroll);
   const handleTabsScroll = React.useMemo(
