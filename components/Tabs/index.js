@@ -254,7 +254,7 @@ const Tabs = ({
     const timer = setTimeout(() => {
       scrollSelectedIntoView();
     }, 100);
-    selectedTabCoordinates(indicatorStyle);
+    // selectedTabCoordinates(indicatorStyle);
     return () => clearTimeout(timer);
   }, [scrollSelectedIntoView, indicatorStyle]);
   console.log("sssss");
