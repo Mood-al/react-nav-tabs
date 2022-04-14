@@ -277,9 +277,9 @@ const Tabs = ({
   const scrollSelectedIntoView = useEventCallback((animation) => {
     const { tabsRects, tabRects } = getTabsRects();
 
-    if (!tabRects || !tabsRects) {
-      return;
-    }
+    // if (!tabMeta || !tabsMeta) {
+    //   return;
+    // }
     if (tabRects[start] < tabsRects[start]) {
       // left side of button is out of view
       const nextScrollStart =
@@ -306,44 +306,37 @@ const Tabs = ({
     }
   });
 
-  const handleTabsScroll = useMemo(
-    () =>
-      debounce(() => {
-        updateScrollButtonState();
-      }),
-    [updateScrollButtonState]
-  );
   useEffect(() => {
-    return () => {
-      handleTabsScroll.clear();
-    };
-  }, [handleTabsScroll]);
+    // Don't animate on the first render.
+    // const timer = setTimeout(() => {
+    scrollSelectedIntoView(defaultIndicatorStyle !== indicatorStyle);
+    // }, 100);
+    // selectedTabCoordinates(indicatorStyle);
+    // return () => clearTimeout(timer);
+  }, [scrollSelectedIntoView, indicatorStyle]);
 
   useEffect(() => {
+    /* Updating the indicator state. */
+    // const timer = setTimeout(() => {
     updateIndicatorState();
+    updateScrollButtonState();
+
+    // }, 100);
+    // () => clearTimeout(timer);
   });
 
-  useEffect(() => {
-    // I put the timeout because there is an issue happened when i put an external css file
-    // I tried to fix it or at least know why did that happened but i couldnt find the issue so i put this timeout.
-    // so this timeout responsible on triggring this function after 100s to aviod some unexpected bugs
-    // the issue that i faced when i used a main css file inside my project and tried to use Raleway font from google fonts inside that css file
-    // so when I imported this css file inside my project this function didnt trigger
-    //  on first render and that caused a bug inside the navigation button
-    updateScrollButtonState();
-    /*  */
-    // const timer = setTimeout(() => updateScrollButtonState(), 100);
-    // return () => clearTimeout(timer);
-  }, [isRTL]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      // console.log(defaultIndicatorStyle, indicatorStyle);
-      scrollSelectedIntoView(defaultIndicatorStyle !== indicatorStyle);
-    }, 100);
-    selectedTabCoordinates(indicatorStyle);
-    return () => clearTimeout(timer);
-  }, [scrollSelectedIntoView, indicatorStyle]);
+  // useEffect(() => {
+  //   // I put the timeout because there is an issue happened when i put an external css file
+  //   // I tried to fix it or at least know why did that happened but i couldnt find the issue so i put this timeout.
+  //   // so this timeout responsible on triggring this function after 100s to aviod some unexpected bugs
+  //   // the issue that i faced when i used a main css file inside my project and tried to use Raleway font from google fonts inside that css file
+  //   // so when I imported this css file inside my project this function didnt trigger
+  //   //  on first render and that caused a bug inside the navigation button
+  //   // const timer = setTimeout(() =>
+  //   updateScrollButtonState()
+  //   // , 100);
+  //   // return () => clearTimeout(timer);
+  // }, [isRTL]);
 
   const handleKeyDown = (event) => {
     const list = tabsRef.current;
@@ -392,6 +385,18 @@ const Tabs = ({
     }
   };
 
+  const handleTabsScroll = useMemo(
+    () =>
+      debounce(() => {
+        updateScrollButtonState();
+      }),
+    [updateScrollButtonState]
+  );
+  useEffect(() => {
+    return () => {
+      handleTabsScroll.clear();
+    };
+  }, [handleTabsScroll]);
   //  TODO find a new way to control prev and next btns!
   const startBtn = (
     <div className="rn___nav___btn___container">
