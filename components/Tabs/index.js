@@ -223,7 +223,7 @@ const Tabs = ({
         tabsRef.current.scrollLeft +
         (tabRef.current[activeTab].getBoundingClientRect()[start] -
           tabsRef.current.getBoundingClientRect()[start]);
-      // tabsRef.current.scrollLeft = nextScrollStart;
+
       scroll(
         nextScrollStart,
         selectedAnimationDuration
@@ -251,10 +251,13 @@ const Tabs = ({
 
   React.useEffect(() => {
     // Don't animate on the first render.
-    scrollSelectedIntoView();
+    const timer = setTimeout(() => {
+      scrollSelectedIntoView();
+    }, 100);
     selectedTabCoordinates(indicatorStyle);
+    return () => clearTimeout(timer);
   }, [scrollSelectedIntoView, indicatorStyle]);
-
+  console.log("sssss");
   React.useEffect(() => {
     /* Updating the indicator state. */
     updateIndicatorState();

@@ -7,7 +7,7 @@ import TabsMeta from "./Features/TabsMeta";
 import Tabs from "./Tabs";
 
 const TabsContainer = () => {
-  const [activeTab, setActiveTab] = useState(2);
+  const [activeTab, setActiveTab] = useState(11);
   const onTabClick = (e, index) => {
     setActiveTab(index);
   };
