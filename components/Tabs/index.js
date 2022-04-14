@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { useEventCallback } from "../../hooks/useEventCallback";
 import { getNormalizedScrollLeft } from "../../utils/getNormalizedScrollLeft";
-import React from "react";
+import React, { memo, useCallback } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useRef } from "react";
@@ -15,6 +15,57 @@ import RightArrow from "../Arrows/RightArrow";
 import ownerDocument from "../../utils/ownerDocument";
 
 const defaultIndicatorStyle = {};
+
+const nextItem = (list, item) => {
+  if (list === item) {
+    return list.firstChild;
+  }
+
+  if (item && item.nextElementSibling) {
+    return item.nextElementSibling;
+  }
+
+  return list.firstChild;
+};
+
+const previousItem = (list, item) => {
+  if (list === item) {
+    return list.lastChild;
+  }
+
+  if (item && item.previousElementSibling) {
+    return item.previousElementSibling;
+  }
+
+  return list.lastChild;
+};
+
+const moveFocus = (list, currentFocus, traversalFunction) => {
+  let wrappedOnce = false;
+  let nextFocus = traversalFunction(list, currentFocus);
+
+  while (nextFocus) {
+    // Prevent infinite loop.
+    if (nextFocus === list.firstChild) {
+      if (wrappedOnce) {
+        return;
+      }
+
+      wrappedOnce = true;
+    } // Same logic as useAutocomplete.js
+
+    const nextFocusDisabled =
+      nextFocus.disabled || nextFocus.getAttribute("aria-disabled") === "true";
+
+    if (!nextFocus.hasAttribute("tabindex") || nextFocusDisabled) {
+      // Move to the next element.
+      nextFocus = traversalFunction(list, nextFocus);
+    } else {
+      nextFocus.focus();
+      return;
+    }
+  }
+};
 
 const Tabs = ({
   onTabClick,
@@ -196,9 +247,9 @@ const Tabs = ({
     [onLeftBtnClick, onRightBtnClick, goToStart, goToEnd]
   );
 
-  const onNativeTabClick = (e, index) => {
+  const onNativeTabClick = useEventCallback((e, index) => {
     onTabClick(e, index);
-  };
+  });
 
   const scroll = (scrollValue, duration, animation = true) => {
     if (animation) {
@@ -254,13 +305,16 @@ const Tabs = ({
     const timer = setTimeout(() => {
       scrollSelectedIntoView();
     }, 100);
-    // selectedTabCoordinates(indicatorStyle);
+    selectedTabCoordinates(indicatorStyle);
     return () => clearTimeout(timer);
   }, [scrollSelectedIntoView, indicatorStyle]);
   console.log("sssss");
   React.useEffect(() => {
     /* Updating the indicator state. */
+    // const timer = setTimeout(() => {
     updateIndicatorState();
+    // }, 100);
+    // () => clearTimeout(timer);
   });
 
   useEffect(() => {
@@ -273,30 +327,6 @@ const Tabs = ({
     const timer = setTimeout(() => updateScrollButtonState(), 100);
     return () => clearTimeout(timer);
   }, [isRTL]);
-
-  const nextItem = (list, item) => {
-    if (list === item) {
-      return list.firstChild;
-    }
-
-    if (item && item.nextElementSibling) {
-      return item.nextElementSibling;
-    }
-
-    return list.firstChild;
-  };
-
-  const previousItem = (list, item) => {
-    if (list === item) {
-      return list.lastChild;
-    }
-
-    if (item && item.previousElementSibling) {
-      return item.previousElementSibling;
-    }
-
-    return list.lastChild;
-  };
 
   const handleKeyDown = (event) => {
     const list = tabsRef.current;
@@ -342,34 +372,6 @@ const Tabs = ({
 
       default:
         break;
-    }
-  };
-
-  const moveFocus = (list, currentFocus, traversalFunction) => {
-    let wrappedOnce = false;
-    let nextFocus = traversalFunction(list, currentFocus);
-
-    while (nextFocus) {
-      // Prevent infinite loop.
-      if (nextFocus === list.firstChild) {
-        if (wrappedOnce) {
-          return;
-        }
-
-        wrappedOnce = true;
-      } // Same logic as useAutocomplete.js
-
-      const nextFocusDisabled =
-        nextFocus.disabled ||
-        nextFocus.getAttribute("aria-disabled") === "true";
-
-      if (!nextFocus.hasAttribute("tabindex") || nextFocusDisabled) {
-        // Move to the next element.
-        nextFocus = traversalFunction(list, nextFocus);
-      } else {
-        nextFocus.focus();
-        return;
-      }
     }
   };
 
@@ -481,7 +483,7 @@ const Tabs = ({
   );
 };
 
-export default Tabs;
+export default memo(Tabs);
 const StyledCutomTabs = styled.div`
   /* box-sizing: border-box; */
   background: red;

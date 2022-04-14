@@ -3,7 +3,7 @@ import "../styles/globals.css";
 import { RTLProvider } from "../context/RTLContext";
 import Head from "next/head";
 import "../styles/rn-tabs.css";
-// import "../styles/main.css";
+import "../styles/main.css";
 
 import Layout from "../components/Layout";
 
