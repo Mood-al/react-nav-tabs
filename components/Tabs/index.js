@@ -1,11 +1,16 @@
 import styled from "@emotion/styled";
 import { useEventCallback } from "../../hooks/useEventCallback";
 import { getNormalizedScrollLeft } from "../../utils/getNormalizedScrollLeft";
-import React, { memo, useCallback } from "react";
-import { useEffect } from "react";
-import { useState } from "react";
-import { useRef } from "react";
-
+import {
+  memo,
+  useState,
+  useEffect,
+  useRef,
+  useImperativeHandle,
+  useMemo,
+  cloneElement,
+  Children,
+} from "react";
 import animate from "../../utils/animate";
 import { debounce } from "../../utils/debounce";
 import RightArrowIcon from "../Arrows/RightArrowIcon";
@@ -87,9 +92,13 @@ const Tabs = ({
   hideNavBtns = false,
   showTabsScroll = false,
 }) => {
+  let start = "left";
+  let end = "right";
+  let scrollLeft = "scrollLeft";
+
   const tabsRef = useRef();
   const tabRef = useRef([]);
-  const [displayScroll, setDisplayScroll] = useState({
+  const [arrowsDisplay, setArrowsDisplay] = useState({
     start: false,
     end: false,
   });
@@ -118,7 +127,7 @@ const Tabs = ({
       };
     }
 
-    let tabRect;
+    let tabRects;
 
     if (tabsNode) {
       const children = tabRef.current;
@@ -126,24 +135,24 @@ const Tabs = ({
       if (children.length > 0) {
         const tab = tabRef.current[activeTab];
 
-        tabRect = tab ? tab.getBoundingClientRect() : null;
+        tabRects = tab ? tab.getBoundingClientRect() : null;
       }
     }
 
     return {
       tabsRects,
-      tabRect,
+      tabRects,
     };
   };
 
   const updateIndicatorState = useEventCallback(() => {
-    const { tabsRects, tabRect } = getTabsRects();
+    const { tabsRects, tabRects } = getTabsRects();
     let startValue = 0;
     let startIndicator;
 
     startIndicator = isRTL ? "right" : "left";
 
-    if (tabRect && tabsRects) {
+    if (tabRects && tabsRects) {
       const correction = isRTL
         ? tabsRects.scrollLeftNormalized +
           tabsRects.clientWidth -
@@ -151,13 +160,13 @@ const Tabs = ({
         : tabsRects.scrollLeft;
       startValue =
         (isRTL ? -1 : 1) *
-        (tabRect[startIndicator] - tabsRects[startIndicator] + correction);
+        (tabRects[startIndicator] - tabsRects[startIndicator] + correction);
     }
 
     const newIndicatorStyle = {
       [startIndicator]: startValue,
       // May be wrong until the font is loaded.
-      ["width"]: tabRect ? tabRect["width"] : 0,
+      width: tabRects ? tabRects["width"] : 0,
     }; // IE11 support, replace with Number.isNaN
     // eslint-disable-next-line no-restricted-globals
 
@@ -195,10 +204,10 @@ const Tabs = ({
       Math.ceil(scrollLeft.toFixed(2)) < scrollWidth - clientWidth - 1;
 
     if (
-      showStartScroll !== displayScroll.start ||
-      showEndScroll !== displayScroll.end
+      showStartScroll !== arrowsDisplay.start ||
+      showEndScroll !== arrowsDisplay.end
     ) {
-      setDisplayScroll({
+      setArrowsDisplay({
         start: showStartScroll,
         end: showEndScroll,
       });
@@ -208,8 +217,10 @@ const Tabs = ({
   });
 
   const onRightBtnClick = () => {
+    const { tabsRects } = getTabsRects();
+
     scroll(
-      tabsRef.current.scrollLeft +
+      tabsRects[scrollLeft] +
         tabRef.current[activeTab].clientWidth * tabsScrollAmount,
       navBtnCLickAnimationDuration
         ? navBtnCLickAnimationDuration
@@ -218,8 +229,10 @@ const Tabs = ({
   };
 
   const onLeftBtnClick = () => {
+    const { tabsRects } = getTabsRects();
+
     scroll(
-      tabsRef.current.scrollLeft -
+      tabsRects[scrollLeft] -
         tabRef.current[activeTab].clientWidth * tabsScrollAmount,
       navBtnCLickAnimationDuration
         ? navBtnCLickAnimationDuration
@@ -236,7 +249,7 @@ const Tabs = ({
     scroll((isRTL ? -1 : 1) * scrollWidth);
   };
 
-  React.useImperativeHandle(
+  useImperativeHandle(
     action,
     () => ({
       onLeftBtnClick,
@@ -253,7 +266,7 @@ const Tabs = ({
 
   const scroll = (scrollValue, duration, animation = true) => {
     if (animation) {
-      animate("scrollLeft", tabsRef.current, scrollValue, {
+      animate(scrollLeft, tabsRef.current, scrollValue, {
         duration: duration ? duration : 300,
       });
     } else {
@@ -261,35 +274,28 @@ const Tabs = ({
     }
   };
 
-  const scrollSelectedIntoView = useEventCallback(() => {
-    let start = "left";
-    let end = "right";
+  const scrollSelectedIntoView = useEventCallback((animation) => {
+    const { tabsRects, tabRects } = getTabsRects();
 
-    if (
-      tabRef.current[activeTab].getBoundingClientRect()[start] <
-      tabsRef.current.getBoundingClientRect()[start]
-    ) {
+    if (!tabRects || !tabsRects) {
+      return;
+    }
+    if (tabRects[start] < tabsRects[start]) {
       // left side of button is out of view
       const nextScrollStart =
-        tabsRef.current.scrollLeft +
-        (tabRef.current[activeTab].getBoundingClientRect()[start] -
-          tabsRef.current.getBoundingClientRect()[start]);
+        tabsRects[scrollLeft] + (tabRects[start] - tabsRects[start]);
 
       scroll(
         nextScrollStart,
         selectedAnimationDuration
           ? selectedAnimationDuration
-          : animationDuration
+          : animationDuration,
+        animation
       );
-    } else if (
-      tabRef.current[activeTab].getBoundingClientRect()[end] >
-      tabsRef.current.getBoundingClientRect()[end]
-    ) {
+    } else if (tabRects[end] > tabsRects[end]) {
       // right side of button is out of view
       const nextScrollStart =
-        tabsRef.current.scrollLeft +
-        (tabRef.current[activeTab].getBoundingClientRect()[end] -
-          tabsRef.current.getBoundingClientRect()[end]);
+        tabsRects[scrollLeft] + (tabRects[end] - tabsRects[end]);
 
       scroll(
         nextScrollStart,
@@ -300,21 +306,21 @@ const Tabs = ({
     }
   });
 
-  React.useEffect(() => {
-    // Don't animate on the first render.
-    const timer = setTimeout(() => {
-      scrollSelectedIntoView();
-    }, 100);
-    selectedTabCoordinates(indicatorStyle);
-    return () => clearTimeout(timer);
-  }, [scrollSelectedIntoView, indicatorStyle]);
-  console.log("sssss");
-  React.useEffect(() => {
-    /* Updating the indicator state. */
-    // const timer = setTimeout(() => {
+  const handleTabsScroll = useMemo(
+    () =>
+      debounce(() => {
+        updateScrollButtonState();
+      }),
+    [updateScrollButtonState]
+  );
+  useEffect(() => {
+    return () => {
+      handleTabsScroll.clear();
+    };
+  }, [handleTabsScroll]);
+
+  useEffect(() => {
     updateIndicatorState();
-    // }, 100);
-    // () => clearTimeout(timer);
   });
 
   useEffect(() => {
@@ -324,9 +330,20 @@ const Tabs = ({
     // the issue that i faced when i used a main css file inside my project and tried to use Raleway font from google fonts inside that css file
     // so when I imported this css file inside my project this function didnt trigger
     //  on first render and that caused a bug inside the navigation button
-    const timer = setTimeout(() => updateScrollButtonState(), 100);
-    return () => clearTimeout(timer);
+    updateScrollButtonState();
+    /*  */
+    // const timer = setTimeout(() => updateScrollButtonState(), 100);
+    // return () => clearTimeout(timer);
   }, [isRTL]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      // console.log(defaultIndicatorStyle, indicatorStyle);
+      scrollSelectedIntoView(defaultIndicatorStyle !== indicatorStyle);
+    }, 100);
+    selectedTabCoordinates(indicatorStyle);
+    return () => clearTimeout(timer);
+  }, [scrollSelectedIntoView, indicatorStyle]);
 
   const handleKeyDown = (event) => {
     const list = tabsRef.current;
@@ -375,18 +392,6 @@ const Tabs = ({
     }
   };
 
-  const handleTabsScroll = React.useMemo(
-    () =>
-      debounce(() => {
-        updateScrollButtonState();
-      }),
-    [updateScrollButtonState]
-  );
-  React.useEffect(() => {
-    return () => {
-      handleTabsScroll.clear();
-    };
-  }, [handleTabsScroll]);
   //  TODO find a new way to control prev and next btns!
   const startBtn = (
     <div className="rn___nav___btn___container">
@@ -394,7 +399,7 @@ const Tabs = ({
         <>
           {isRTL ? (
             <RightArrow
-              disabled={!displayScroll.end}
+              disabled={!arrowsDisplay.end}
               className={`rn___right___nav___btn rn___btn rn___nav___btn ${
                 hideNavBtnsOnMobile ? "display___md___none" : ""
               }`}
@@ -404,7 +409,7 @@ const Tabs = ({
             />
           ) : (
             <LeftArrow
-              disabled={!displayScroll.start}
+              disabled={!arrowsDisplay.start}
               className={`rn___left___nav___btn rn___btn rn___nav___btn ${
                 hideNavBtnsOnMobile ? "display___md___none" : ""
               }`}
@@ -424,7 +429,7 @@ const Tabs = ({
         <>
           {isRTL ? (
             <LeftArrow
-              disabled={!displayScroll.start}
+              disabled={!arrowsDisplay.start}
               className={`rn___left___nav___btn rn___btn rn___nav___btn${
                 hideNavBtnsOnMobile ? "display___md___none" : ""
               }`}
@@ -434,7 +439,7 @@ const Tabs = ({
             />
           ) : (
             <RightArrow
-              disabled={!displayScroll.end}
+              disabled={!arrowsDisplay.end}
               className={`rn___right___nav___btn rn___btn rn___nav___btn${
                 hideNavBtnsOnMobile ? "display___md___none" : ""
               }`}
@@ -462,8 +467,8 @@ const Tabs = ({
         }`}
       >
         <>
-          {React.Children.map(children, (child, index) =>
-            React.cloneElement(child, {
+          {Children.map(children, (child, index) =>
+            cloneElement(child, {
               ref: (ref) => (tabRef.current[index] = ref),
               onClick: (e) => onNativeTabClick(e, index),
               role: "tab",
