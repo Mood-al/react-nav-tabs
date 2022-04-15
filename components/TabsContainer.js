@@ -81,7 +81,14 @@ const TabsContainer = () => {
         selectedTabCoordinates={selectedTabCoordinates}
       >
         {[...Array(20).keys()].map((item, index) => (
-          <button key={item}>item {item}</button>
+          <button
+            key={item}
+            className={`rn___tab rn___btn ${
+              activeTab === index ? "rn___tab___selected" : ""
+            }`}
+          >
+            item {item}
+          </button>
         ))}
       </Tabs>
       <CustomNavBtns
