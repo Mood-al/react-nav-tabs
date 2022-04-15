@@ -18,6 +18,7 @@ import LeftArrowIcon from "../Arrows/LeftArrowIcon";
 import LeftArrow from "../Arrows/LeftArrow";
 import RightArrow from "../Arrows/RightArrow";
 import ownerDocument from "../../utils/ownerDocument";
+// import ownerWindow from "../../utils/ownerWindow";
 
 const defaultIndicatorStyle = {};
 
@@ -307,13 +308,43 @@ const Tabs = ({
   });
 
   useEffect(() => {
-    // Don't animate on the first render.
-    // const timer = setTimeout(() => {
-    scrollSelectedIntoView(defaultIndicatorStyle !== indicatorStyle);
-    // }, 100);
-    // selectedTabCoordinates(indicatorStyle);
-    // return () => clearTimeout(timer);
-  }, [scrollSelectedIntoView, indicatorStyle]);
+    const handleResize = debounce(() => {
+      updateIndicatorState();
+      updateScrollButtonState();
+    });
+
+    const win = tabsRef.current;
+    win.addEventListener("resize", handleResize);
+    let resizeObserver;
+
+    if (typeof ResizeObserver !== "undefined") {
+      resizeObserver = new ResizeObserver(handleResize);
+      Array.from(tabRef.current).forEach((child) => {
+        resizeObserver.observe(child);
+      });
+    }
+
+    return () => {
+      handleResize.clear();
+      win.removeEventListener("resize", handleResize);
+
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+    };
+  }, [updateIndicatorState, updateScrollButtonState]);
+  const handleTabsScroll = useMemo(
+    () =>
+      debounce(() => {
+        updateScrollButtonState();
+      }),
+    [updateScrollButtonState]
+  );
+  useEffect(() => {
+    return () => {
+      handleTabsScroll.clear();
+    };
+  }, [handleTabsScroll]);
 
   useEffect(() => {
     /* Updating the indicator state. */
@@ -324,6 +355,15 @@ const Tabs = ({
     // }, 100);
     // () => clearTimeout(timer);
   });
+
+  useEffect(() => {
+    // Don't animate on the first render.
+    // const timer = setTimeout(() => {
+    scrollSelectedIntoView(defaultIndicatorStyle !== indicatorStyle);
+    // }, 100);
+    // selectedTabCoordinates(indicatorStyle);
+    // return () => clearTimeout(timer);
+  }, [scrollSelectedIntoView, indicatorStyle]);
 
   // useEffect(() => {
   //   // I put the timeout because there is an issue happened when i put an external css file
@@ -385,18 +425,6 @@ const Tabs = ({
     }
   };
 
-  const handleTabsScroll = useMemo(
-    () =>
-      debounce(() => {
-        updateScrollButtonState();
-      }),
-    [updateScrollButtonState]
-  );
-  useEffect(() => {
-    return () => {
-      handleTabsScroll.clear();
-    };
-  }, [handleTabsScroll]);
   //  TODO find a new way to control prev and next btns!
   const startBtn = (
     <div className="rn___nav___btn___container">
