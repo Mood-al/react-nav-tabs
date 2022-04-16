@@ -5,9 +5,9 @@ const SwitchInputFeatures = ({ onSwitchChange, showTabsFeaturesObj }) => {
     <>
       {" "}
       <div className="col-md-3">
-        <div class="form-check form-switch mt-3">
+        <div className="form-check form-switch mt-3">
           <input
-            class="form-check-input"
+            className="form-check-input"
             type="checkbox"
             role="switch"
             id="hideNavBtns"
@@ -15,15 +15,15 @@ const SwitchInputFeatures = ({ onSwitchChange, showTabsFeaturesObj }) => {
             onChange={onSwitchChange}
             checked={showTabsFeaturesObj.hideNavBtns}
           />
-          <label class="form-check-label" htmlFor="hideNavBtns">
+          <label className="form-check-label" htmlFor="hideNavBtns">
             Hide navigantion buttons
           </label>
         </div>
       </div>
       <div className="col-md-4">
-        <div class="form-check form-switch mt-3">
+        <div className="form-check form-switch mt-3">
           <input
-            class="form-check-input"
+            className="form-check-input"
             type="checkbox"
             role="switch"
             id="hideNavBtnsOnMobile"
@@ -31,15 +31,15 @@ const SwitchInputFeatures = ({ onSwitchChange, showTabsFeaturesObj }) => {
             onChange={onSwitchChange}
             checked={showTabsFeaturesObj.hideNavBtnsOnMobile}
           />
-          <label class="form-check-label" htmlFor="hideNavBtnsOnMobile">
+          <label className="form-check-label" htmlFor="hideNavBtnsOnMobile">
             Hide navigantion buttons on mobile screen
           </label>
         </div>
       </div>
       <div className="col-md-4">
-        <div class="form-check form-switch mt-3">
+        <div className="form-check form-switch mt-3">
           <input
-            class="form-check-input"
+            className="form-check-input"
             type="checkbox"
             role="switch"
             id="showTabsScroll"
@@ -47,7 +47,7 @@ const SwitchInputFeatures = ({ onSwitchChange, showTabsFeaturesObj }) => {
             onChange={onSwitchChange}
             checked={showTabsFeaturesObj.showTabsScroll}
           />
-          <label class="form-check-label" htmlFor="showTabsScroll">
+          <label className="form-check-label" htmlFor="showTabsScroll">
             show tabs scroll
           </label>
         </div>
