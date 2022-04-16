@@ -4,6 +4,7 @@ import ControlTabsBtns from "./Features/ControlTabsBtns";
 import CustomNavBtns from "./Features/CustomNavBtns";
 import RtlSwitchBtn from "./Features/RtlSwitchBtn";
 import TabsMeta from "./Features/TabsMeta";
+import Tab from "./Tab";
 import Tabs from "./Tabs";
 
 const TabsContainer = () => {
@@ -81,9 +82,10 @@ const TabsContainer = () => {
         selectedTabCoordinates={selectedTabCoordinates}
       >
         {[...Array(20).keys()].map((item, index) => (
-          <button key={item}>item {item}</button>
+          <Tab key={item}>item {item}</Tab>
         ))}
       </Tabs>
+
       <CustomNavBtns
         navBtnsRef={navBtnsRef}
         isRightArrowDisapled={isRightArrowDisapled}

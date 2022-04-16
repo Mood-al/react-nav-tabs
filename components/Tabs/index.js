@@ -509,9 +509,8 @@ const Tabs = ({
               ["aria-controls"]: `panel-${index}`,
               id: `tab-${index}`,
               tabIndex: activeTab === index ? "0" : "-1",
-              className: `rn___tab rn___btn ${
-                activeTab === index ? "rn___tab___selected" : ""
-              }`,
+              className: "rn___tab rn___btn",
+              selected: activeTab === index,
             })
           )}
         </>
