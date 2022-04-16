@@ -361,7 +361,7 @@ const Tabs = ({
     // const timer = setTimeout(() => {
     scrollSelectedIntoView(defaultIndicatorStyle !== indicatorStyle);
     // }, 100);
-    // selectedTabCoordinates(indicatorStyle);
+    selectedTabCoordinates(indicatorStyle);
     // return () => clearTimeout(timer);
   }, [scrollSelectedIntoView, indicatorStyle]);
 
@@ -485,6 +485,7 @@ const Tabs = ({
       )}
     </div>
   );
+  let childIndex = 0;
 
   return (
     <div className="rn___tabs___container">
@@ -500,8 +501,12 @@ const Tabs = ({
         }`}
       >
         <>
-          {Children.map(children, (child, index) =>
-            cloneElement(child, {
+          {Children.map(children, (child, index) => {
+            const childValue = childIndex;
+            const selected = childValue === activeTab;
+            childIndex += 1;
+
+            return cloneElement(child, {
               ref: (ref) => (tabRef.current[index] = ref),
               onClick: (e) => onNativeTabClick(e, index),
               role: "tab",
@@ -510,9 +515,9 @@ const Tabs = ({
               id: `tab-${index}`,
               tabIndex: activeTab === index ? "0" : "-1",
               className: "rn___tab rn___btn",
-              selected: activeTab === index,
-            })
-          )}
+              selected: selected,
+            });
+          })}
         </>
       </div>
       {endBtn}

@@ -1,7 +1,6 @@
 import React from "react";
 
 const Tab = React.forwardRef(({ ...props }, ref) => {
-  console.log(props);
   return (
     <button
       {...props}
