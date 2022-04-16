@@ -86,13 +86,24 @@ const Tabs = ({
   animationDuration = 300,
   navBtnCLickAnimationDuration = 300,
   selectedAnimationDuration = 300,
-  NavBtnsIconColor = "#ddd",
-  rightBtnIcon = <RightArrowIcon NavBtnsIconColor={NavBtnsIconColor} />,
-  leftBtnIcon = <LeftArrowIcon NavBtnsIconColor={NavBtnsIconColor} />,
-  hideNavBtnsOnMobile = false,
+  navBtnsIconColor = "rgba(0, 0, 0, 0.6)",
+  rightBtnIcon = <RightArrowIcon navBtnsIconColor={navBtnsIconColor} />,
+  leftBtnIcon = <LeftArrowIcon navBtnsIconColor={navBtnsIconColor} />,
+  hideNavBtnsOnMobile = true,
   hideNavBtns = false,
   showTabsScroll = false,
+  className,
 }) => {
+  tabsScrollAmount = tabsScrollAmount ? parseInt(tabsScrollAmount) : 3;
+  animationDuration = animationDuration ? parseInt(animationDuration) : 300;
+  navBtnCLickAnimationDuration = navBtnCLickAnimationDuration
+    ? parseInt(navBtnCLickAnimationDuration)
+    : 300;
+  navBtnCLickAnimationDuration = navBtnCLickAnimationDuration
+    ? parseInt(navBtnCLickAnimationDuration)
+    : 300;
+
+  console.log(tabsScrollAmount);
   let start = "left";
   let end = "right";
   let scrollLeft = "scrollLeft";
@@ -424,18 +435,20 @@ const Tabs = ({
         break;
     }
   };
-
+  console.log(hideNavBtnsOnMobile, "sss");
   //  TODO find a new way to control prev and next btns!
   const startBtn = (
-    <div className="rn___nav___btn___container">
+    <div
+      className={`rn___nav___btn___container ${
+        hideNavBtnsOnMobile ? "display___md___none" : ""
+      }`}
+    >
       {!hideNavBtns && (
         <>
           {isRTL ? (
             <RightArrow
               disabled={!arrowsDisplay.end}
-              className={`rn___right___nav___btn rn___btn rn___nav___btn ${
-                hideNavBtnsOnMobile ? "display___md___none" : ""
-              }`}
+              className={`rn___right___nav___btn rn___btn rn___nav___btn `}
               onClick={onRightBtnClick}
               dir="ltr"
               rightBtnIcon={rightBtnIcon}
@@ -443,9 +456,7 @@ const Tabs = ({
           ) : (
             <LeftArrow
               disabled={!arrowsDisplay.start}
-              className={`rn___left___nav___btn rn___btn rn___nav___btn ${
-                hideNavBtnsOnMobile ? "display___md___none" : ""
-              }`}
+              className={`rn___left___nav___btn rn___btn rn___nav___btn `}
               onClick={onLeftBtnClick}
               dir="ltr"
               leftBtnIcon={leftBtnIcon}
@@ -457,15 +468,17 @@ const Tabs = ({
   );
 
   const endBtn = (
-    <div className="rn___nav___btn___container">
+    <div
+      className={`rn___nav___btn___container ${
+        hideNavBtnsOnMobile ? "display___md___none" : ""
+      }`}
+    >
       {!hideNavBtns && (
         <>
           {isRTL ? (
             <LeftArrow
               disabled={!arrowsDisplay.start}
-              className={`rn___left___nav___btn rn___btn rn___nav___btn${
-                hideNavBtnsOnMobile ? "display___md___none" : ""
-              }`}
+              className={`rn___left___nav___btn rn___btn rn___nav___btn `}
               onClick={onLeftBtnClick}
               dir="ltr"
               leftBtnIcon={leftBtnIcon}
@@ -473,9 +486,7 @@ const Tabs = ({
           ) : (
             <RightArrow
               disabled={!arrowsDisplay.end}
-              className={`rn___right___nav___btn rn___btn rn___nav___btn${
-                hideNavBtnsOnMobile ? "display___md___none" : ""
-              }`}
+              className={`rn___right___nav___btn rn___btn rn___nav___btn`}
               onClick={onRightBtnClick}
               dir="ltr"
               rightBtnIcon={rightBtnIcon}
@@ -488,7 +499,7 @@ const Tabs = ({
   let childIndex = 0;
 
   return (
-    <div className="rn___tabs___container">
+    <div className={`rn___tabs___container`}>
       {startBtn}
       <div
         ref={tabsRef}
@@ -502,19 +513,18 @@ const Tabs = ({
       >
         <>
           {Children.map(children, (child, index) => {
-            const childValue = childIndex;
-            const selected = childValue === activeTab;
+            const selected = childIndex === activeTab;
             childIndex += 1;
 
             return cloneElement(child, {
               ref: (ref) => (tabRef.current[index] = ref),
               onClick: (e) => onNativeTabClick(e, index),
               role: "tab",
-              ["aria-selected"]: activeTab === index ? "true" : "false",
+              ["aria-selected"]: selected ? "true" : "false",
               ["aria-controls"]: `panel-${index}`,
               id: `tab-${index}`,
-              tabIndex: activeTab === index ? "0" : "-1",
-              className: "rn___tab rn___btn",
+              tabIndex: selected ? "0" : "-1",
+              className: `rn___tab rn___btn ${child.props.className}`,
               selected: selected,
             });
           })}

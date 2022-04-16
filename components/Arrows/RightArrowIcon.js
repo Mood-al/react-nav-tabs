@@ -1,4 +1,4 @@
-const RightArrowIcon = ({ NavBtnsIconColor }) => {
+const RightArrowIcon = ({ navBtnsIconColor }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -6,7 +6,7 @@ const RightArrowIcon = ({ NavBtnsIconColor }) => {
       height="24"
       viewBox="0 0 24 24"
       fill="none"
-      stroke={NavBtnsIconColor}
+      stroke={navBtnsIconColor}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"

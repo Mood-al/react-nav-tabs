@@ -12,11 +12,11 @@
   display: inline-block;
 }
 .display___none {
-  display: none;
+  display: none !important;
 }
 @media (max-width: 991.98px) {
   .display___md___none {
-    display: none;
+    display: none !important;
   }
 }
 
