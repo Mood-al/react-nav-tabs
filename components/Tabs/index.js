@@ -1,16 +1,6 @@
-import styled from "@emotion/styled";
+import React from "react";
 import { useEventCallback } from "../../hooks/useEventCallback";
 import { getNormalizedScrollLeft } from "../../utils/getNormalizedScrollLeft";
-import {
-  memo,
-  useState,
-  useEffect,
-  useRef,
-  useImperativeHandle,
-  useMemo,
-  cloneElement,
-  Children,
-} from "react";
 import animate from "../../utils/animate";
 import { debounce } from "../../utils/debounce";
 import RightArrowIcon from "../Arrows/RightArrowIcon";
@@ -18,9 +8,8 @@ import LeftArrowIcon from "../Arrows/LeftArrowIcon";
 import LeftArrow from "../Arrows/LeftArrow";
 import RightArrow from "../Arrows/RightArrow";
 import ownerDocument from "../../utils/ownerDocument";
-// import ownerWindow from "../../utils/ownerWindow";
 
-const defaultIndicatorStyle = {};
+const defaultActiveTabPos = {};
 
 const nextItem = (list, item) => {
   if (list === item) {
@@ -39,8 +28,8 @@ const previousItem = (list, item) => {
     return list.lastChild;
   }
 
-  if (item && item.previousElementSibling) {
-    return item.previousElementSibling;
+  if (item && item.previoReact.usElementSibling) {
+    return item.previoReact.usElementSibling;
   }
 
   return list.lastChild;
@@ -51,14 +40,13 @@ const moveFocus = (list, currentFocus, traversalFunction) => {
   let nextFocus = traversalFunction(list, currentFocus);
 
   while (nextFocus) {
-    // Prevent infinite loop.
     if (nextFocus === list.firstChild) {
       if (wrappedOnce) {
         return;
       }
 
       wrappedOnce = true;
-    } // Same logic as useAutocomplete.js
+    }
 
     const nextFocusDisabled =
       nextFocus.disabled || nextFocus.getAttribute("aria-disabled") === "true";
@@ -107,20 +95,21 @@ const Tabs = ({
   let end = "right";
   let scrollLeft = "scrollLeft";
 
-  const tabsRef = useRef();
-  const tabRef = useRef([]);
-  const [arrowsDisplay, setArrowsDisplay] = useState({
+  const tabsRef = React.useRef(null);
+  const tabRef = React.useRef([]);
+  const [arrowsDisplay, setArrowsDisplay] = React.useState({
     start: false,
     end: false,
   });
-  const [indicatorStyle, setIndicatorStyle] = useState(defaultIndicatorStyle);
+  const [activeTabPosition, setActiveTabPosition] =
+    React.useState(defaultActiveTabPos);
 
   const getTabsRects = () => {
     const tabsNode = tabsRef.current;
     let tabsRects;
 
     if (tabsNode) {
-      const rect = tabsNode.getBoundingClientRect(); // create a new object with ClientRect class props + scrollLeft
+      const rect = tabsNode.getBoundingClientRect();
 
       tabsRects = {
         clientWidth: tabsNode.clientWidth,
@@ -156,12 +145,12 @@ const Tabs = ({
     };
   };
 
-  const updateIndicatorState = useEventCallback(() => {
+  const updateActiveTabPosition = useEventCallback(() => {
     const { tabsRects, tabRects } = getTabsRects();
     let startValue = 0;
-    let startIndicator;
+    let startActiveTabPosition;
 
-    startIndicator = isRTL ? "right" : "left";
+    startActiveTabPosition = isRTL ? "right" : "left";
 
     if (tabRects && tabsRects) {
       const correction = isRTL
@@ -171,36 +160,38 @@ const Tabs = ({
         : tabsRects.scrollLeft;
       startValue =
         (isRTL ? -1 : 1) *
-        (tabRects[startIndicator] - tabsRects[startIndicator] + correction);
+        (tabRects[startActiveTabPosition] -
+          tabsRects[startActiveTabPosition] +
+          correction);
     }
 
-    const newIndicatorStyle = {
-      [startIndicator]: startValue,
-      // May be wrong until the font is loaded.
+    const newActiveTabPosition = {
+      [startActiveTabPosition]: startValue,
+
       width: tabRects ? tabRects["width"] : 0,
-    }; // IE11 support, replace with Number.isNaN
-    // eslint-disable-next-line no-restricted-globals
+    };
 
     if (
-      isNaN(indicatorStyle[startIndicator]) ||
-      isNaN(indicatorStyle["width"])
+      isNaN(activeTabPosition[startActiveTabPosition]) ||
+      isNaN(activeTabPosition["width"])
     ) {
-      setIndicatorStyle(newIndicatorStyle);
+      setActiveTabPosition(newActiveTabPosition);
     } else {
       const dStart = Math.abs(
-        indicatorStyle[startIndicator] - newIndicatorStyle[startIndicator]
+        activeTabPosition[startActiveTabPosition] -
+          newActiveTabPosition[startActiveTabPosition]
       );
       const dSize = Math.abs(
-        indicatorStyle["width"] - newIndicatorStyle["width"]
+        activeTabPosition["width"] - newActiveTabPosition["width"]
       );
 
       if (dStart >= 1 || dSize >= 1) {
-        setIndicatorStyle(newIndicatorStyle);
+        setActiveTabPosition(newActiveTabPosition);
       }
     }
   });
 
-  const updateScrollButtonState = useEventCallback(() => {
+  const updateNavBtnsState = useEventCallback(() => {
     const { scrollWidth, clientWidth } = tabsRef.current;
     let showStartScroll;
     let showEndScroll;
@@ -208,7 +199,7 @@ const Tabs = ({
     const scrollLeft = getNormalizedScrollLeft(
       tabsRef.current,
       isRTL ? "rtl" : "ltr"
-    ); // use 1 for the potential rounding error with browser zooms.
+    );
 
     showStartScroll = Math.floor(scrollLeft.toFixed(2)) > 1;
     showEndScroll =
@@ -260,7 +251,7 @@ const Tabs = ({
     scroll((isRTL ? -1 : 1) * scrollWidth);
   };
 
-  useImperativeHandle(
+  React.useImperativeHandle(
     action,
     () => ({
       onLeftBtnClick,
@@ -317,10 +308,10 @@ const Tabs = ({
     }
   });
 
-  useEffect(() => {
+  React.useEffect(() => {
     const handleResize = debounce(() => {
-      updateIndicatorState();
-      updateScrollButtonState();
+      updateActiveTabPosition();
+      updateNavBtnsState();
     });
 
     const win = tabsRef.current;
@@ -342,57 +333,48 @@ const Tabs = ({
         resizeObserver.disconnect();
       }
     };
-  }, [updateIndicatorState, updateScrollButtonState]);
-  const handleTabsScroll = useMemo(
+  }, [updateActiveTabPosition, updateNavBtnsState]);
+
+  const handleTabsScroll = React.useMemo(
     () =>
       debounce(() => {
-        updateScrollButtonState();
+        updateNavBtnsState();
       }),
-    [updateScrollButtonState]
+    [updateNavBtnsState]
   );
-  useEffect(() => {
+  React.useEffect(() => {
     return () => {
       handleTabsScroll.clear();
     };
   }, [handleTabsScroll]);
 
-  useEffect(() => {
-    /* Updating the indicator state. */
-    // const timer = setTimeout(() => {
-    updateIndicatorState();
-    updateScrollButtonState();
-
-    // }, 100);
-    // () => clearTimeout(timer);
+  React.useEffect(() => {
+    updateActiveTabPosition();
+    updateNavBtnsState();
   });
 
-  useEffect(() => {
-    // Don't animate on the first render.
-    // const timer = setTimeout(() => {
-    scrollSelectedIntoView(defaultIndicatorStyle !== indicatorStyle);
-    // }, 100);
-    selectedTabCoordinates(indicatorStyle);
-    // return () => clearTimeout(timer);
-  }, [scrollSelectedIntoView, indicatorStyle]);
+  React.useEffect(() => {
+    scrollSelectedIntoView(defaultActiveTabPos !== activeTabPosition);
 
-  // useEffect(() => {
-  //   // I put the timeout because there is an issue happened when i put an external css file
+    selectedTabCoordinates(activeTabPosition);
+  }, [scrollSelectedIntoView, activeTabPosition]);
+
+  // React.useEffect(() => {
+  //   // I put the timeout becaReact.use there is an issue happened when i put an external css file
   //   // I tried to fix it or at least know why did that happened but i couldnt find the issue so i put this timeout.
   //   // so this timeout responsible on triggring this function after 100s to aviod some unexpected bugs
-  //   // the issue that i faced when i used a main css file inside my project and tried to use Raleway font from google fonts inside that css file
+  //   // the issue that i faced when i React.used a main css file inside my project and tried to React.use Raleway font from google fonts inside that css file
   //   // so when I imported this css file inside my project this function didnt trigger
-  //   //  on first render and that caused a bug inside the navigation button
+  //   //  on first render and that caReact.used a bug inside the navigation button
   //   // const timer = setTimeout(() =>
-  //   updateScrollButtonState()
+  //   updateNavBtnsState()
   //   // , 100);
   //   // return () => clearTimeout(timer);
   // }, [isRTL]);
 
   const handleKeyDown = (event) => {
     const list = tabsRef.current;
-    const currentFocus = ownerDocument(list).activeElement; // Keyboard navigation assumes that [role="tab"] are siblings
-    // though we might warn in the future about nested, interactive elements
-    // as a a11y violation
+    const currentFocus = ownerDocument(list).activeElement;
 
     const role = currentFocus.getAttribute("role");
 
@@ -504,26 +486,27 @@ const Tabs = ({
         ref={tabsRef}
         role="tablist"
         aria-label="tabs"
-        /* A function that is called when a key is pressed. */
         onKeyDown={handleKeyDown}
         onScroll={handleTabsScroll}
-        className={`rn___tabs ${
+        className={`rn___tabs ${className ? className : ""} ${
           !showTabsScroll ? "hide___rn___tabs___scroll" : ""
         }`}
       >
         <>
-          {Children.map(children, (child, index) => {
+          {React.Children.map(children, (child, index) => {
             const selected = childIndex === activeTab;
             childIndex += 1;
 
-            return cloneElement(child, {
+            return React.cloneElement(child, {
               ref: (ref) => (tabRef.current[index] = ref),
               onClick: (e) => onNativeTabClick(e, index),
               role: "tab",
               ["aria-selected"]: selected ? "true" : "false",
               id: `tab-${childIndex}`,
               tabIndex: selected ? "0" : "-1",
-              className: `rn___tab rn___btn ${child.props.className}`,
+              className: `rn___tab rn___btn ${
+                child.props.className ? child.props.className : ""
+              }`,
               selected: selected,
             });
           })}
@@ -534,38 +517,4 @@ const Tabs = ({
   );
 };
 
-export default memo(Tabs);
-const StyledCutomTabs = styled.div`
-  /* box-sizing: border-box; */
-  background: red;
-  display: flex;
-  overflow: auto;
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-
-  .tab {
-    padding: 10px 40px;
-    white-space: nowrap;
-    cursor: pointer;
-  }
-  &::-webkit-scrollbar {
-    display: none;
-  }
-`;
-
-const StyledTabsContainer = styled.div`
-  padding: 0 25px;
-  position: relative;
-  display: flex;
-  button {
-    /* position: absolute;
-    top: 50%;
-    transform: translate(0, -50%);
-    &.right {
-      right: -0px;
-    }
-    &.left {
-      left: -0px;
-    } */
-  }
-`;
+export default Tabs;

@@ -1,4 +1,4 @@
-import { memo, useContext, useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { RTLContext } from "../context/RTLContext";
 import ControlTabsBtns from "./Features/ControlTabsBtns";
 import CustomNavBtns from "./Features/CustomNavBtns";
@@ -12,6 +12,7 @@ import Tabs from "./Tabs";
 const TabsContainer = () => {
   const [activeTab, setActiveTab] = useState(11);
   const onTabClick = (e, index) => {
+    console.log(e);
     setActiveTab(index);
   };
   const { isRTL } = useContext(RTLContext);
