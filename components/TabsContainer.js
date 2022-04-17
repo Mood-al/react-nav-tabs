@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from "react";
+import { memo, useContext, useRef, useState } from "react";
 import { RTLContext } from "../context/RTLContext";
 import ControlTabsBtns from "./Features/ControlTabsBtns";
 import CustomNavBtns from "./Features/CustomNavBtns";
@@ -10,7 +10,7 @@ import Tab from "./Tab";
 import Tabs from "./Tabs";
 
 const TabsContainer = () => {
-  const [activeTab, setActiveTab] = useState(14);
+  const [activeTab, setActiveTab] = useState(1);
   const onTabClick = (e, index) => {
     setActiveTab(index);
   };
@@ -109,9 +109,23 @@ const TabsContainer = () => {
         // be carefulwhen you use state with this function it will be triggered on every scroll movement and when the app rerenders
         selectedTabCoordinates={selectedTabCoordinates}
       >
-        {[...Array(20).keys()].map((item) => (
+        {/* {[...Array(20).keys()].map((item) => (
           <Tab key={item}>item {item}</Tab>
-        ))}
+        ))} */}
+        <Tab>item </Tab>
+        <Tab>item </Tab>
+        <Tab>item </Tab>
+        <Tab>item </Tab>
+        <Tab>item </Tab>
+        <Tab>item </Tab>
+        <Tab>item </Tab>
+        <Tab>item </Tab>
+        <Tab>item </Tab>
+        <Tab>item </Tab>
+        <Tab>item </Tab>
+        <Tab>item </Tab>
+        <Tab>item </Tab>
+        <Tab>item </Tab>
       </Tabs>
 
       <CustomNavBtns

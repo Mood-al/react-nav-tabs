@@ -103,7 +103,6 @@ const Tabs = ({
     ? parseInt(navBtnCLickAnimationDuration)
     : 300;
 
-  console.log(tabsScrollAmount);
   let start = "left";
   let end = "right";
   let scrollLeft = "scrollLeft";
@@ -289,9 +288,9 @@ const Tabs = ({
   const scrollSelectedIntoView = useEventCallback((animation) => {
     const { tabsRects, tabRects } = getTabsRects();
 
-    // if (!tabMeta || !tabsMeta) {
-    //   return;
-    // }
+    if (!tabsRects || !tabRects) {
+      return;
+    }
     if (tabRects[start] < tabsRects[start]) {
       // left side of button is out of view
       const nextScrollStart =
@@ -435,7 +434,7 @@ const Tabs = ({
         break;
     }
   };
-  console.log(hideNavBtnsOnMobile, "sss");
+
   //  TODO find a new way to control prev and next btns!
   const startBtn = (
     <div
@@ -505,6 +504,7 @@ const Tabs = ({
         ref={tabsRef}
         role="tablist"
         aria-label="tabs"
+        /* A function that is called when a key is pressed. */
         onKeyDown={handleKeyDown}
         onScroll={handleTabsScroll}
         className={`rn___tabs ${
@@ -521,8 +521,7 @@ const Tabs = ({
               onClick: (e) => onNativeTabClick(e, index),
               role: "tab",
               ["aria-selected"]: selected ? "true" : "false",
-              ["aria-controls"]: `panel-${index}`,
-              id: `tab-${index}`,
+              id: `tab-${childIndex}`,
               tabIndex: selected ? "0" : "-1",
               className: `rn___tab rn___btn ${child.props.className}`,
               selected: selected,
