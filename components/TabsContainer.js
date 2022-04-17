@@ -10,7 +10,7 @@ import Tab from "./Tab";
 import Tabs from "./Tabs";
 
 const TabsContainer = () => {
-  const [activeTab, setActiveTab] = useState(1);
+  const [activeTab, setActiveTab] = useState(11);
   const onTabClick = (e, index) => {
     setActiveTab(index);
   };
