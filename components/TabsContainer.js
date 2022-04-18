@@ -6,8 +6,7 @@ import InputFeatures from "./Features/InputFeatures";
 import RtlSwitchBtn from "./Features/RtlSwitchBtn";
 import SwitchInputFeatures from "./Features/SwitchInputFeatures";
 import TabsMeta from "./Features/TabsMeta";
-import Tab from "./Tab";
-import Tabs from "./Tabs";
+import { Tab, Tabs } from "react-tabs-scrollable";
 
 const TabsContainer = () => {
   const [activeTab, setActiveTab] = useState(11);
@@ -49,7 +48,6 @@ const TabsContainer = () => {
       [e.target.name]: e.target.checked,
     });
   };
-  console.log(showTabsFeaturesObj);
 
   return (
     <div>

@@ -28,8 +28,8 @@ const previousItem = (list, item) => {
     return list.lastChild;
   }
 
-  if (item && item.previoReact.usElementSibling) {
-    return item.previoReact.usElementSibling;
+  if (item && item.previousElementSibling) {
+    return item.previousElementSibling;
   }
 
   return list.lastChild;
