@@ -71,7 +71,7 @@
   background-color: transparent;
   border-radius: 40px;
   border: 2px solid var(--rts-gray-color);
-  transition: 0.3s all;
+  /* transition: 0.3s all; */
 }
 .rn___tab___selected {
   background-color: var(--rts-primary-color);
