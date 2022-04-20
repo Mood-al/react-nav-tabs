@@ -4,6 +4,7 @@ import { RTLProvider } from "../context/RTLContext";
 import Head from "next/head";
 import "../styles/rn-tabs.css";
 import "../styles/main.css";
+import "react-tabs-scrollable/dist/rts.css";
 
 import Layout from "../components/Layout";
 

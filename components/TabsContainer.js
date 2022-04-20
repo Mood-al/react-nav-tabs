@@ -11,7 +11,6 @@ import { Tab, Tabs } from "react-tabs-scrollable";
 const TabsContainer = () => {
   const [activeTab, setActiveTab] = useState(11);
   const onTabClick = (e, index) => {
-    console.log(e);
     setActiveTab(index);
   };
   const { isRTL } = useContext(RTLContext);
@@ -108,23 +107,9 @@ const TabsContainer = () => {
         // be carefulwhen you use state with this function it will be triggered on every scroll movement and when the app rerenders
         selectedTabCoordinates={selectedTabCoordinates}
       >
-        {/* {[...Array(20).keys()].map((item) => (
+        {[...Array(20).keys()].map((item) => (
           <Tab key={item}>item {item}</Tab>
-        ))} */}
-        <Tab>item </Tab>
-        <Tab>item </Tab>
-        <Tab>item </Tab>
-        <Tab>item </Tab>
-        <Tab>item </Tab>
-        <Tab>item </Tab>
-        <Tab>item </Tab>
-        <Tab>item </Tab>
-        <Tab>item </Tab>
-        <Tab>item </Tab>
-        <Tab>item </Tab>
-        <Tab>item </Tab>
-        <Tab>item </Tab>
-        <Tab>item </Tab>
+        ))}
       </Tabs>
 
       <CustomNavBtns
