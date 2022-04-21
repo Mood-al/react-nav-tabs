@@ -30,6 +30,7 @@ const TabsContainer = () => {
     showTabsScroll: false,
   });
 
+  console.log(showTabsFeaturesObj);
   const didReachEnd = (val) => setIsRightArrowDisabled(val);
   const didReachStart = (val) => setIsLeftArrowDisabled(val);
   const selectedTabCoordinates = (coors) => setSelectedTabCoor(coors);
