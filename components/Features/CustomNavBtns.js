@@ -3,7 +3,7 @@ import Title from "../Title";
 const CustomNavBtns = ({
   isLeftArrowDisapled,
   isRightArrowDisapled,
-  navBtnsRef,
+  tabsRef,
 }) => {
   return (
     <>
@@ -13,7 +13,7 @@ const CustomNavBtns = ({
           <button
             className="flex-fill btn rn___btn"
             disabled={isLeftArrowDisapled}
-            onClick={() => navBtnsRef.current.onLeftBtnClick()}
+            onClick={() => tabsRef.current.onLeftBtnClick()}
           >
             click me to move the tabs to left
           </button>
@@ -22,7 +22,7 @@ const CustomNavBtns = ({
           <button
             className="flex-fill btn rn___btn mt-md-0 mt-2"
             disabled={isRightArrowDisapled}
-            onClick={() => navBtnsRef.current.onRightBtnClick()}
+            onClick={() => tabsRef.current.onRightBtnClick()}
           >
             click me to move the tabs to right
           </button>

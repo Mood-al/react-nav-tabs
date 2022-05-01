@@ -2,11 +2,13 @@ import "../styles/globals.css";
 
 import { RTLProvider } from "../context/RTLContext";
 import Head from "next/head";
-import "../styles/rn-tabs.css";
+// import "../styles/rn-tabs.css";
 import "../styles/main.css";
 import "react-tabs-scrollable/dist/rts.css";
+import Tabs from "@mui/material/Tabs";
 
 import Layout from "../components/Layout";
+import { NextSeo } from "next-seo";
 
 function MyApp({ Component, pageProps }) {
   return (
@@ -18,12 +20,19 @@ function MyApp({ Component, pageProps }) {
           integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
           crossOrigin="anonymous"
         />
+        <meta
+          name="keywords"
+          content="React,Component,tabs, react-tabs-scrollable, scrollable, HTML, CSS, JavaScript"
+        />
+        <meta name="author" content="Muhammed ALiwi"></meta>
       </Head>
+      <NextSeo
+        title="React tabs scrollable"
+        description="a simple react scrollable tabs with a lot of additional features and with fully supporting of RTL mode"
+      />
       <RTLProvider>
         <Layout>
-          <div className="container">
-            <Component {...pageProps} />
-          </div>
+          <Component {...pageProps} />
         </Layout>
       </RTLProvider>
     </>

@@ -13,7 +13,7 @@ const RTLProvider = ({ children, ...props }) => {
     isRTL ? body.setAttribute("dir", "rtl") : body.setAttribute("dir", "ltr");
   }, [isRTL]);
   return (
-    <RTLContext.Provider value={{ ...props, onRTLSwitcher, isRTL }}>
+    <RTLContext.Provider value={{ ...props, onRTLSwitcher, isRTL, setIsRTL }}>
       {children}
     </RTLContext.Provider>
   );
