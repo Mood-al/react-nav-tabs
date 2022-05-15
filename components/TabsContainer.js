@@ -21,6 +21,7 @@ const featuresInitialState = {
 const initailActiveTab = 11;
 const TabsContainer = () => {
   const [activeTab, setActiveTab] = useState(initailActiveTab);
+  const [key, setKey] = useState(false);
   const onTabClick = (e, index) => {
     setActiveTab(index);
   };
@@ -54,11 +55,18 @@ const TabsContainer = () => {
     setActiveTab(initailActiveTab);
     setIsRTL(false);
     setShowTabsFeaturesObj(featuresInitialState);
+    setKey(true);
+    if (key) {
+      setTimeout(() => {
+        setKey(false);
+      }, 100);
+    }
   };
   return (
     <div className="">
       <div className="p-2 shadow-sm sticky-top bg-white">
         <Tabs
+          key={key}
           activeTab={activeTab}
           onTabClick={onTabClick}
           // the props returns a group of events to control the tabs such as onLeftBtnClick

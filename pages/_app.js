@@ -2,15 +2,25 @@ import "../styles/globals.css";
 
 import { RTLProvider } from "../context/RTLContext";
 import Head from "next/head";
-// import "../styles/rn-tabs.css";
-import "../styles/main.css";
-import "react-tabs-scrollable/dist/rts.css";
-import Tabs from "@mui/material/Tabs";
-
+import Router from "next/router";
+import NProgress from "nprogress";
 import Layout from "../components/Layout";
 import { NextSeo } from "next-seo";
+import DefaultLayout from "../layouts/DefaultLayout";
+import "../styles/main.css";
+import "react-tabs-scrollable/dist/rts.css";
+import "nprogress/nprogress.css";
 
+NProgress.configure({
+  showSpinner: false,
+});
+
+Router.events.on("routeChangeStart", () => NProgress.start());
+Router.events.on("routeChangeComplete", () => NProgress.done());
+Router.events.on("routeChangeError", () => NProgress.done());
 function MyApp({ Component, pageProps }) {
+  const CustomLayout = Component.Layout || DefaultLayout;
+
   return (
     <>
       <Head>
@@ -32,7 +42,9 @@ function MyApp({ Component, pageProps }) {
       />
       <RTLProvider>
         <Layout>
-          <Component {...pageProps} />
+          <CustomLayout>
+            <Component {...pageProps} />
+          </CustomLayout>{" "}
         </Layout>
       </RTLProvider>
     </>

@@ -1,21 +1,40 @@
-import styled from "@emotion/styled";
-import React from "react";
-import Title from "./Title";
 import Link from "next/link";
+import { useRouter } from "next/dist/client/router";
+import { FaNpm } from "react-icons/fa";
 const Navbar = () => {
+  const { route } = useRouter();
+
   return (
     <div className="nav bg-primary">
       <div className="container">
         <nav className="nav text-white d-flex align-items-center justify-content-between">
-          <a
-            className="fs-2 "
-            href="https://www.npmjs.com/search?q=react-tabs-scrollable"
-          >
-            React-tabs-scrollable
-          </a>
-          <Link href="/demos">
-            <a>Demos</a>
-          </Link>
+          {route === "/" ? (
+            <a
+              className="fs-2"
+              target="_blank"
+              href="https://www.npmjs.com/package/react-tabs-scrollable"
+              rel="noopener noreferrer"
+            >
+              react-tabs-scrollable
+            </a>
+          ) : (
+            <Link href="/">
+              <a className="fs-2">react-tabs-scrollable</a>
+            </Link>
+          )}
+          <div>
+            <Link href="/demos">
+              <a>Demos & examples</a>
+            </Link>
+            <a
+              className="ms-5"
+              target="_blank"
+              href="https://www.npmjs.com/package/react-tabs-scrollable"
+              rel="noopener noreferrer"
+            >
+              <FaNpm size={"4rem"} />
+            </a>
+          </div>
         </nav>
       </div>
     </div>
