@@ -24,6 +24,10 @@ function MyApp({ Component, pageProps }) {
   return (
     <>
       <Head>
+        <meta
+          name="google-site-verification"
+          content="uti4mWncYz-dPMY1zuIP-tSk5DqnL4-K3E4FX9fkGaE"
+        />
         <link
           href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
           rel="stylesheet"
