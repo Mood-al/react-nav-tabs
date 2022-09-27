@@ -38,7 +38,7 @@ function MyApp({ Component, pageProps }) {
           name="keywords"
           content="React,Component,tabs, react-tabs-scrollable, scrollable, HTML, CSS, JavaScript"
         />
-        <meta name="author" content="Muhammed ALiwi"></meta>
+        <meta name="author" content="Muhammed Aliwi"></meta>
       </Head>
       <NextSeo
         title="React tabs scrollable"
