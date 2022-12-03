@@ -32,7 +32,7 @@ const WithTabScreens = ({ title, scrollToId = "" }) => {
         }
       />
 
-      <div className="p-2 shadow-sm">
+      <div className="p-2 shadow-sm" id={scrollToId}>
         <Tabs activeTab={activeTab} onTabClick={onTabClick}>
           {/* generating an array to loop through it  */}
           {[...Array(20).keys()].map((item) => (
