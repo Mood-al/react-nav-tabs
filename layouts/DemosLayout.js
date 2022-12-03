@@ -5,6 +5,7 @@ import ResturantMenuDemo from "../components/Demos/ResturantMenuDemo";
 import SimpleDemo from "../components/Demos/SimpleDemo";
 import { NextSeo } from "next-seo";
 import RcTabsDemo from "../components/Demos/RcTabsDemo";
+import WithTabScreens from "../components/Demos/WithTabScreens";
 const DemosLayout = ({ children }) => {
   return (
     <div className="container">
@@ -15,6 +16,7 @@ const DemosLayout = ({ children }) => {
       />
       <div>
         <SimpleDemo title={"Simple tabs"} />
+        <WithTabScreens title="With tabs screen" scrollToId="withTabScreens" />
         <MuiDemo title="Mui like tabs" />
         <NavDemo title={"Route navigation tabs (Next Js)"} />
         <ResturantMenuDemo title="Resturant menu demo" />

@@ -7,6 +7,7 @@ import NProgress from "nprogress";
 import Layout from "../components/Layout";
 import { NextSeo } from "next-seo";
 import DefaultLayout from "../layouts/DefaultLayout";
+import "../styles/bootstrap.min.css";
 import "../styles/main.css";
 import "react-tabs-scrollable/dist/rts.css";
 import "nprogress/nprogress.css";
@@ -28,12 +29,7 @@ function MyApp({ Component, pageProps }) {
           name="google-site-verification"
           content="uti4mWncYz-dPMY1zuIP-tSk5DqnL4-K3E4FX9fkGaE"
         />
-        <link
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
-          rel="stylesheet"
-          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
-          crossOrigin="anonymous"
-        />
+
         <meta
           name="keywords"
           content="React,Component,tabs, react-tabs-scrollable, scrollable, HTML, CSS, JavaScript"
