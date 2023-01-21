@@ -84,3 +84,6 @@ input {
   -webkit-animation-name: fadeInLeft;
   animation-name: fadeInLeft;
 }
+.text-primary {
+  color: var(--rts-primary-color) !important;
+}
