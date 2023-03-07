@@ -47,6 +47,7 @@ function MyApp({ Component, pageProps }) {
           </CustomLayout>{" "}
         </Layout>
       </RTLProvider>
+      
     </>
   );
 }

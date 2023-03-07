@@ -2,9 +2,8 @@ import styled from "@emotion/styled";
 import React from "react";
 import { Tab, Tabs } from "react-tabs-scrollable";
 import { FiChevronRight, FiChevronLeft } from "react-icons/fi";
-import Title from "../Title";
 
-const MuiDemo = ({ title }) => {
+const MuiDemo = () => {
   const [activeTab, setActiveTab] = React.useState(1);
 
   // define a onClick function to bind the value on tab click
@@ -14,8 +13,7 @@ const MuiDemo = ({ title }) => {
   };
   return (
     <>
-      <Title className="display-6" title={title} />
-      <StyledMuiDemo className="p-2 shadow-sm">
+      <StyledMuiDemo>
         <Tabs
           activeTab={activeTab}
           leftBtnIcon={<FiChevronLeft size={"1.5em"} />}
@@ -28,20 +26,6 @@ const MuiDemo = ({ title }) => {
           ))}
         </Tabs>
       </StyledMuiDemo>
-      <iframe
-        src="https://codesandbox.io/embed/mui-like-react-tabs-scrollable-example-e7jccy?fontsize=14&hidenavigation=1&theme=dark"
-        style={{
-          width: "100%",
-          height: "500px",
-          border: 0,
-          borderRadius: "4px",
-          overflow: "hidden",
-        }}
-        className="my-4"
-        title="mui like react tabs scrollable example"
-        allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
-        sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
-      ></iframe>
     </>
   );
 };

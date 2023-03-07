@@ -7,7 +7,7 @@ const Layout = ({ children }) => {
     <div>
       <Navbar />
       {children}
-      <div className="border mb-3" />
+      {/* <div className="border mb-3" />
       <div className="container mb-3">
         <div className="border-top border-bottom border-2 border-danger fs-5 p-3 text-wrap">
           Please consider giving me a star on the{" "}
@@ -21,8 +21,8 @@ const Layout = ({ children }) => {
           </a>
           's repo it will give me motiviation to do more packages like this!
         </div>
-      </div>
-      <FooterBanner>
+      </div> */}
+      {/* <FooterBanner>
         <p className="lead display-5 text-center text-white">
           Have you checked my new package{" "}
           <a
@@ -35,7 +35,7 @@ const Layout = ({ children }) => {
           </a>
           ?
         </p>
-      </FooterBanner>
+      </FooterBanner> */}
       <Footer />
     </div>
   );

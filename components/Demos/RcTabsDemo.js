@@ -13,9 +13,7 @@ const RcTabsDemo = ({ title }) => {
   };
   return (
     <StyledRcTabs>
-      <Title className="display-6" title={title} />
-
-      <StyledRcTabs className="p-2 shadow-sm d-flex">
+      <StyledRcTabs className="d-flex">
         <Tabs
           activeTab={activeTab}
           onTabClick={onTabClick}
@@ -40,20 +38,6 @@ const RcTabsDemo = ({ title }) => {
           ))}
         </select>
       </StyledRcTabs>
-      <iframe
-        src="https://codesandbox.io/embed/react-tabs-scrollable-rc-tabs-like-example-lrbt2j?fontsize=14&hidenavigation=1&theme=dark"
-        style={{
-          width: "100%",
-          height: "500px",
-          border: 0,
-          borderRadius: "4px",
-          overflow: "hidden",
-        }}
-        className="my-4"
-        title="mui like react tabs scrollable example"
-        allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
-        sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
-      ></iframe>
     </StyledRcTabs>
   );
 };

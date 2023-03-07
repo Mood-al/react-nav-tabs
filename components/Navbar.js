@@ -18,14 +18,12 @@ const Navbar = () => {
               react-tabs-scrollable
             </a>
           ) : (
-            <Link href="/">
-              <a className="fs-2">react-tabs-scrollable</a>
+            <Link href="/" className="fs-2">
+              react-tabs-scrollable
             </Link>
           )}
           <div>
-            <Link href="/demos">
-              <a>Demos & examples</a>
-            </Link>
+            <Link href="/demos">Demos & examples</Link>
             <a
               className="ms-5"
               target="_blank"

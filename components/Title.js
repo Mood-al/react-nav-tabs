@@ -1,13 +1,21 @@
-const Title = ({ title, ...props }) => {
+const Title = ({ title, content, isHashSelected, onClick = () => {} }) => {
   return (
-    <h2
-      {...props}
-      className={`display-5 my-3 fw-normal ${
-        props.className ? props.className : ""
-      }`}
-    >
-      {title}
-    </h2>
+    <>
+      <div className="d-flex align-items-center">
+        <h2 className="display-5 mt-3 mb-0 fw-normal ">
+          <a
+            href={`#${title?.replace(/\s+/g, "")}`}
+            className={`display-5 ${
+              isHashSelected ? "text-warning" : "text-muted"
+            }`}
+            onClick={onClick}
+          >
+            #{title}
+          </a>
+        </h2>
+      </div>
+      {content && <p className="text-muted text-lead lead ms-4">{content}</p>}
+    </>
   );
 };
 
