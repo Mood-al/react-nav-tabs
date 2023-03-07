@@ -1,5 +1,3 @@
-import "../styles/globals.css";
-
 import { RTLProvider } from "../context/RTLContext";
 import Head from "next/head";
 import Router from "next/router";
@@ -7,8 +5,8 @@ import NProgress from "nprogress";
 import Layout from "../components/Layout";
 import { NextSeo } from "next-seo";
 import DefaultLayout from "../layouts/DefaultLayout";
-import "../styles/bootstrap.min.css";
 import "react-tabs-scrollable/dist/rts.css";
+import "../styles/bootstrap.css";
 import "nprogress/nprogress.css";
 import "../styles/main.css";
 
