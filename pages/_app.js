@@ -8,9 +8,9 @@ import Layout from "../components/Layout";
 import { NextSeo } from "next-seo";
 import DefaultLayout from "../layouts/DefaultLayout";
 import "../styles/bootstrap.min.css";
-import "../styles/main.css";
 import "react-tabs-scrollable/dist/rts.css";
 import "nprogress/nprogress.css";
+import "../styles/main.css";
 
 NProgress.configure({
   showSpinner: false,
@@ -47,7 +47,6 @@ function MyApp({ Component, pageProps }) {
           </CustomLayout>{" "}
         </Layout>
       </RTLProvider>
-      
     </>
   );
 }
