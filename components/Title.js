@@ -2,7 +2,7 @@ const Title = ({ title, content, isHashSelected, onClick = () => {} }) => {
   return (
     <>
       <div className="d-flex align-items-center">
-        <h2 className="display-5 mt-3 mb-0 fw-normal ">
+        <h2 className="display-5 my-3 fw-normal ">
           <a
             href={`#${title?.replace(/\s+/g, "")}`}
             className={`display-5 ${
